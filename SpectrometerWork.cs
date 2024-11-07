@@ -17,8 +17,6 @@ namespace WindowsFormsApp1
     {
         dynamic wrapper = new HP2000Wrapper();
 
-
- 
         public string loadData(int timeMicros, int average)
         {
             
@@ -63,36 +61,39 @@ namespace WindowsFormsApp1
 
         }
 
-        public void saveData()
+        public void saveData(int filter,bool Xpixel=false,bool XwaveLength=true)
         {
             
             Spectrum data;
-            float[] wavelengthArray = wrapper.getWavelength();// массив с длинами волн
-            data = wrapper.ReadSpectrum();
+            
+            data = wrapper.ReadSpectrum();// массив с данными спектрометра(у)
+            float[] resultData = wrapper.dataProcess(data.array, filter, false, false, false);
+            string file = "spectrum_data.txt";
             if (data.valid_flag == SpectrumDataValidFlag.SPECTRUMDATA_VALID)
-            {
-                float[] resultData = wrapper.dataProcess(data.array, 1, false, false, false);
-                string file = "spectrum_data.txt";
-                using (StreamWriter writer = new StreamWriter(file))
+            {               
+                if(XwaveLength == true)
                 {
-                    // Запись данных
-                    for (int i = 0; wavelengthArray[i] < 1676; i++) // !!!жесткая привязка к длине волны надо исправить!!!
+                    float[] wavelengthArray = wrapper.getWavelength();// массив с длинами волн(х) 
+                    using (StreamWriter writer = new StreamWriter(file))
                     {
-                        writer.WriteLine($"{wavelengthArray[i].ToString("F3", CultureInfo.InvariantCulture)}\t{resultData[i].ToString("F2", CultureInfo.InvariantCulture)}");
+                        // Запись данных
+                        for (int i = 0; wavelengthArray[i] < 1676; i++) // !!!жесткая привязка к длине волны надо исправить!!!
+                        {
+                            writer.WriteLine($"{wavelengthArray[i].ToString("F3", CultureInfo.InvariantCulture)}\t{resultData[i].ToString("F2", CultureInfo.InvariantCulture)}");
+                        }
+                    }
+                }else if(Xpixel == true)
+                {
+                    using (StreamWriter writer = new StreamWriter(file))
+                    {
+                        // Запись данных
+                        for (int i = 0; i <= 510; i++) 
+                        {
+                            writer.WriteLine($"{i.ToString("F3", CultureInfo.InvariantCulture)}\t{resultData[i].ToString("F2", CultureInfo.InvariantCulture)}");
+                        }
                     }
                 }
-
-                Console.WriteLine("Данные спектра записаны в файл.");
-            }
-
-            else
-            {
-                Console.WriteLine("Произошла ошибка при записи спектра.");
-            }
-
-            
+            }   
         }
-
-
     }
 }

@@ -14,7 +14,7 @@ namespace WindowsFormsApp1
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = System.IO.Path.Combine(Application.StartupPath, "data"); ; // начальная папка имее относительный путь и начинается в директории с исполняемым файлом
+                openFileDialog.InitialDirectory = Path.Combine(Application.StartupPath, "data"); // начальная папка имее относительный путь и начинается в директории с исполняемым файлом
                 openFileDialog.Filter = "Text files (*.txt)|*.txt"; // фильтр файлов
                 openFileDialog.FilterIndex = 1;
                 openFileDialog.RestoreDirectory = true;
@@ -51,6 +51,17 @@ namespace WindowsFormsApp1
                     MessageBox.Show($"Файл сохранен: {filePath}");
                 }
             }
+        }
+
+        public void automaticSaveData()
+        {     
+            
+            
+            DateTime currentDate = DateTime.Now;
+            string formattedDate = currentDate.ToString("dd_MM_yyyy_HH_mm_ss");
+            string filePath = Path.Combine(Application.StartupPath, "data", "automatic saving") + "\\data" + formattedDate + ".txt";// имя файла   
+            string content = File.ReadAllText("spectrum_data.txt");// данные из промежуточного файла
+            File.WriteAllText(filePath, content);
         }
     }
 }

@@ -14,6 +14,8 @@ using OxyPlot.Series;
 using OxyPlot.WindowsForms;
 using HP2000_wrapper;
 using System.Threading;
+using System.IO;
+using static System.Net.WebRequestMethods;
 
 namespace WindowsFormsApp1
 {
@@ -22,12 +24,10 @@ namespace WindowsFormsApp1
     {
         
         private HP2000Wrapper wrapper = new HP2000Wrapper();
-
         private dynamic spectrometer = new SpectrometerWork();
-
         private dynamic plotView;
-
         private dynamic data = new GetData(); // получение данных со спектрометра
+        private bool ContinuousScanningFlag; // флаг для работы с автоматическим сканированием
 
 
 
@@ -35,13 +35,12 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
 
-            
-
             // =======работа с графиком========
-            
-            plotView = new OxyPlotSchedule(data.Data("spectrum_data.txt"));// подключение графика
-            var addPlot = plotView.Addplot();// ф-ция отрисовки графика
+            waveLengthToolStripMenuItem.Checked = true;// по дефолту отрисовываем грфик с длинами волн
+            plotView = new OxyPlotSchedule(data.Data("spectrum_data.txt"));// подключение графика            
+            var addPlot = plotView.Addplot();// ф-ция отрисовки графика            
             Controls.Add(addPlot);// Добавляем PlotView на форму
+            plotView.hidePlot();// убираем старые значения
 
             // =======работа со спектрометром========
             // подключение спектрометра
@@ -61,9 +60,9 @@ namespace WindowsFormsApp1
             {
                 wrapper.initialize(); // инициализируем спектрометр
                 notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";              
-            }            
-
-
+            }
+            
+            
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -75,20 +74,51 @@ namespace WindowsFormsApp1
         {
             int timeMicros = int.Parse(timeMicrosInput.Text);
             int average = int.Parse(averageInput.Text);
+            int filter = int.Parse(filterInput.Text);
             
             notificationsLabel.Text = spectrometer.loadData(timeMicros, average);//загружаем данные в спектрометр
             spectrometer.readyData(notificationsLabel, progressBar1);//проверяем данные на готовность
-            spectrometer.saveData();// сохраняем данные в файл
+
+            if (waveLengthToolStripMenuItem.Checked == true)
+            {
+                spectrometer.saveData(filter,false,true);// сохраняем данные в файл
+            }
+            else
+            {
+                spectrometer.saveData(filter, true, false);
+            }
+
             data = new GetData().Data("spectrum_data.txt");// считываем обновленные данные из файла
 
-            plotView.updatePlot(data);// выводим новый график
+            plotView.updatePlot(data, pixelXToolStripMenuItem.Checked, waveLengthToolStripMenuItem.Checked);// выводим новый график
 
+            if(automaticSaveToolStripMenuItem.Checked == true)
+            {
+                new LoadAndSaveReadyData().automaticSaveData();// автоматическое сохранение               
+            }
+        }
+ 
+        async private void ContinScanBtn_Click(object sender, EventArgs e)
+        {
+            ContinuousScanningFlag = true;
+            await Task.Run(() =>
+            {
+                while (ContinuousScanningFlag == true)
+                {
+                    oneScanBtn_Click(null, EventArgs.Empty);
+                }
+                
+            });
+        }
 
+        private void stopScanBtn_Click(object sender, EventArgs e)
+        {
+            ContinuousScanningFlag = false;
         }
 
         private void onSpectrometer_Click(object sender, EventArgs e)
         {
-            bool openSpectr = wrapper.openSpectraMeter(); 
+            bool openSpectr = wrapper.openSpectraMeter(); //wrapper.openSpectraMeter()
 
             if (openSpectr != true)
             {
@@ -105,11 +135,9 @@ namespace WindowsFormsApp1
 
         }
 
-        
-
         private void clearCurveBtn_Click(object sender, EventArgs e)
         {
-            
+            plotView.hidePlot();// убираем старые значения
         }
 
         private void loadSpectralDataMenuItem_Click(object sender, EventArgs e)
@@ -125,9 +153,53 @@ namespace WindowsFormsApp1
             new LoadAndSaveReadyData().SaveReadyData();// сохраняем данные
         }
 
+        private void automaticSaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            automaticSaveToolStripMenuItem.Checked = !automaticSaveToolStripMenuItem.Checked;//переключение автоматического сохранения
+        }
+
+        private void findPeakBtn_Click(object sender, EventArgs e)
+        {
+            int thresHold = int.Parse(thresholdInput.Text);
+            int peakWidth = int.Parse(peakWidthInput.Text);
+            plotView.AddPeakAnnotations(thresHold, peakWidth);
+        }
+
+       
+
+        private void pixelXToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int filter = int.Parse(filterInput.Text);
+            
+            pixelXToolStripMenuItem.Checked = true;
+            
+            waveLengthToolStripMenuItem.Checked = false;
+            spectrometer.saveData(filter, true, false);
+            data = new GetData().Data("spectrum_data.txt");// считываем обновленные данные из файла
+
+            plotView.updatePlot(data, true, false);
+
+
+        }
+
+        private void waveLengthToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            int filter = int.Parse(filterInput.Text);
+            waveLengthToolStripMenuItem.Checked = true;
+            
+            pixelXToolStripMenuItem.Checked = false;
+            spectrometer.saveData(filter, false, true);// сохраняем данные в файл
+            data = new GetData().Data("spectrum_data.txt");// считываем обновленные данные из файла
+            
+            plotView.updatePlot(data, false, true);
+
+
+        }
+
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             wrapper.closeSpectraMeter();
+            
         }
     }
 }

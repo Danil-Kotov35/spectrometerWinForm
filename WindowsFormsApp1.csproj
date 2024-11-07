@@ -66,6 +66,7 @@
     <Compile Include="GetData.cs" />
     <Compile Include="LoadAndSaveReadyData.cs" />
     <Compile Include="OxyPlotSchedule.cs" />
+    <Compile Include="PeakSearch.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpectrometerWork.cs" />

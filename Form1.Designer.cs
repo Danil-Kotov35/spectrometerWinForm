@@ -71,7 +71,7 @@
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.loadSpectralDataMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.manualSaveDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.автоматическоеСохранениеСпектральныхДанныхToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.automaticSaveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.оборудываниеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.калибровкаДлиныВолныToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.другоеToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,8 +79,8 @@
             this.onSpectrometer = new System.Windows.Forms.ToolStripMenuItem();
             this.настройкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.насройкаОсиХToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.пиксельToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.длинаВолныToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pixelXToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.waveLengthToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.времяToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.количествоКривыхToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
@@ -138,6 +138,7 @@
             this.stopScanBtn.TabIndex = 2;
             this.stopScanBtn.Text = "остановить сканирование";
             this.stopScanBtn.UseVisualStyleBackColor = true;
+            this.stopScanBtn.Click += new System.EventHandler(this.stopScanBtn_Click);
             // 
             // ContinScanBtn
             // 
@@ -147,6 +148,7 @@
             this.ContinScanBtn.TabIndex = 1;
             this.ContinScanBtn.Text = "непрерывное сканирование";
             this.ContinScanBtn.UseVisualStyleBackColor = true;
+            this.ContinScanBtn.Click += new System.EventHandler(this.ContinScanBtn_Click);
             // 
             // oneScanBtn
             // 
@@ -271,6 +273,7 @@
             this.findPeakBtn.TabIndex = 3;
             this.findPeakBtn.Text = "OK";
             this.findPeakBtn.UseVisualStyleBackColor = true;
+            this.findPeakBtn.Click += new System.EventHandler(this.findPeakBtn_Click);
             // 
             // label9
             // 
@@ -287,6 +290,7 @@
             this.peakWidthInput.Name = "peakWidthInput";
             this.peakWidthInput.Size = new System.Drawing.Size(68, 20);
             this.peakWidthInput.TabIndex = 8;
+            this.peakWidthInput.Text = "10";
             // 
             // label8
             // 
@@ -303,6 +307,7 @@
             this.thresholdInput.Name = "thresholdInput";
             this.thresholdInput.Size = new System.Drawing.Size(68, 20);
             this.thresholdInput.TabIndex = 6;
+            this.thresholdInput.Text = "1000";
             // 
             // panel9
             // 
@@ -521,7 +526,7 @@
             this.toolStripMenuItem1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.loadSpectralDataMenuItem,
             this.manualSaveDataToolStripMenuItem,
-            this.автоматическоеСохранениеСпектральныхДанныхToolStripMenuItem});
+            this.automaticSaveToolStripMenuItem});
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
             this.toolStripMenuItem1.Size = new System.Drawing.Size(57, 20);
             this.toolStripMenuItem1.Text = "Файлы";
@@ -540,11 +545,12 @@
             this.manualSaveDataToolStripMenuItem.Text = "Ручное сохранение спектральных данных";
             this.manualSaveDataToolStripMenuItem.Click += new System.EventHandler(this.manualSaveDataToolStripMenuItem_Click);
             // 
-            // автоматическоеСохранениеСпектральныхДанныхToolStripMenuItem
+            // automaticSaveToolStripMenuItem
             // 
-            this.автоматическоеСохранениеСпектральныхДанныхToolStripMenuItem.Name = "автоматическоеСохранениеСпектральныхДанныхToolStripMenuItem";
-            this.автоматическоеСохранениеСпектральныхДанныхToolStripMenuItem.Size = new System.Drawing.Size(358, 22);
-            this.автоматическоеСохранениеСпектральныхДанныхToolStripMenuItem.Text = "Автоматическое сохранение спектральных данных";
+            this.automaticSaveToolStripMenuItem.Name = "automaticSaveToolStripMenuItem";
+            this.automaticSaveToolStripMenuItem.Size = new System.Drawing.Size(358, 22);
+            this.automaticSaveToolStripMenuItem.Text = "Автоматическое сохранение спектральных данных";
+            this.automaticSaveToolStripMenuItem.Click += new System.EventHandler(this.automaticSaveToolStripMenuItem_Click);
             // 
             // оборудываниеToolStripMenuItem
             // 
@@ -594,29 +600,31 @@
             // насройкаОсиХToolStripMenuItem
             // 
             this.насройкаОсиХToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.пиксельToolStripMenuItem,
-            this.длинаВолныToolStripMenuItem,
+            this.pixelXToolStripMenuItem,
+            this.waveLengthToolStripMenuItem,
             this.времяToolStripMenuItem});
             this.насройкаОсиХToolStripMenuItem.Name = "насройкаОсиХToolStripMenuItem";
             this.насройкаОсиХToolStripMenuItem.Size = new System.Drawing.Size(183, 22);
             this.насройкаОсиХToolStripMenuItem.Text = "Насройка оси Х";
             // 
-            // пиксельToolStripMenuItem
+            // pixelXToolStripMenuItem
             // 
-            this.пиксельToolStripMenuItem.Name = "пиксельToolStripMenuItem";
-            this.пиксельToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.пиксельToolStripMenuItem.Text = "Пиксель";
+            this.pixelXToolStripMenuItem.Name = "pixelXToolStripMenuItem";
+            this.pixelXToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pixelXToolStripMenuItem.Text = "Пиксель";
+            this.pixelXToolStripMenuItem.Click += new System.EventHandler(this.pixelXToolStripMenuItem_Click);
             // 
-            // длинаВолныToolStripMenuItem
+            // waveLengthToolStripMenuItem
             // 
-            this.длинаВолныToolStripMenuItem.Name = "длинаВолныToolStripMenuItem";
-            this.длинаВолныToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
-            this.длинаВолныToolStripMenuItem.Text = "Длина волны";
+            this.waveLengthToolStripMenuItem.Name = "waveLengthToolStripMenuItem";
+            this.waveLengthToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.waveLengthToolStripMenuItem.Text = "Длина волны";
+            this.waveLengthToolStripMenuItem.Click += new System.EventHandler(this.waveLengthToolStripMenuItem_Click);
             // 
             // времяToolStripMenuItem
             // 
             this.времяToolStripMenuItem.Name = "времяToolStripMenuItem";
-            this.времяToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.времяToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.времяToolStripMenuItem.Text = "Время";
             // 
             // количествоКривыхToolStripMenuItem
@@ -805,7 +813,7 @@
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem loadSpectralDataMenuItem;
         private System.Windows.Forms.ToolStripMenuItem manualSaveDataToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem автоматическоеСохранениеСпектральныхДанныхToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem automaticSaveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem оборудываниеToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem калибровкаДлиныВолныToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem другоеToolStripMenuItem;
@@ -818,8 +826,8 @@
         private System.Windows.Forms.ToolStripMenuItem коррекцияToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem внешнийТриггерToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem критическаяТочкаToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem пиксельToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem длинаВолныToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pixelXToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem waveLengthToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem времяToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem3;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem4;
