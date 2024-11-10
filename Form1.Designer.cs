@@ -45,7 +45,7 @@
             this.panel10 = new System.Windows.Forms.Panel();
             this.findPeakBtn = new System.Windows.Forms.Button();
             this.label9 = new System.Windows.Forms.Label();
-            this.peakWidthInput = new System.Windows.Forms.TextBox();
+            this.quantityPeakInput = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.thresholdInput = new System.Windows.Forms.TextBox();
             this.panel9 = new System.Windows.Forms.Panel();
@@ -92,7 +92,7 @@
             this.configureToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.активироватьToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.коррекцияToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.внешнийТриггерToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.extTriggerMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.критическаяТочкаToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label10 = new System.Windows.Forms.Label();
@@ -257,7 +257,7 @@
             this.panel10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panel10.Controls.Add(this.findPeakBtn);
             this.panel10.Controls.Add(this.label9);
-            this.panel10.Controls.Add(this.peakWidthInput);
+            this.panel10.Controls.Add(this.quantityPeakInput);
             this.panel10.Controls.Add(this.label8);
             this.panel10.Controls.Add(this.thresholdInput);
             this.panel10.Location = new System.Drawing.Point(548, 37);
@@ -278,24 +278,24 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(25, 77);
+            this.label9.Location = new System.Drawing.Point(11, 78);
             this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(46, 13);
+            this.label9.Size = new System.Drawing.Size(66, 13);
             this.label9.TabIndex = 9;
-            this.label9.Text = "Ширина";
+            this.label9.Text = "Количество";
             // 
-            // peakWidthInput
+            // quantityPeakInput
             // 
-            this.peakWidthInput.Location = new System.Drawing.Point(82, 74);
-            this.peakWidthInput.Name = "peakWidthInput";
-            this.peakWidthInput.Size = new System.Drawing.Size(68, 20);
-            this.peakWidthInput.TabIndex = 8;
-            this.peakWidthInput.Text = "10";
+            this.quantityPeakInput.Location = new System.Drawing.Point(82, 74);
+            this.quantityPeakInput.Name = "quantityPeakInput";
+            this.quantityPeakInput.Size = new System.Drawing.Size(68, 20);
+            this.quantityPeakInput.TabIndex = 8;
+            this.quantityPeakInput.Text = "3";
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(25, 31);
+            this.label8.Location = new System.Drawing.Point(11, 31);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(38, 13);
             this.label8.TabIndex = 7;
@@ -372,6 +372,7 @@
             this.darkSpectCh.TabIndex = 2;
             this.darkSpectCh.Text = "Выч.Темн";
             this.darkSpectCh.UseVisualStyleBackColor = true;
+            this.darkSpectCh.CheckedChanged += new System.EventHandler(this.darkSpectCh_CheckedChanged);
             // 
             // nonlinearCorCh
             // 
@@ -382,6 +383,7 @@
             this.nonlinearCorCh.TabIndex = 1;
             this.nonlinearCorCh.Text = "Нелинейная";
             this.nonlinearCorCh.UseVisualStyleBackColor = true;
+            this.nonlinearCorCh.CheckedChanged += new System.EventHandler(this.nonlinearCorCh_CheckedChanged);
             // 
             // waveformCorCh
             // 
@@ -392,6 +394,7 @@
             this.waveformCorCh.TabIndex = 0;
             this.waveformCorCh.Text = "Формы Волны";
             this.waveformCorCh.UseVisualStyleBackColor = true;
+            this.waveformCorCh.CheckedChanged += new System.EventHandler(this.waveformCorCh_CheckedChanged);
             // 
             // label2
             // 
@@ -610,21 +613,21 @@
             // pixelXToolStripMenuItem
             // 
             this.pixelXToolStripMenuItem.Name = "pixelXToolStripMenuItem";
-            this.pixelXToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.pixelXToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.pixelXToolStripMenuItem.Text = "Пиксель";
             this.pixelXToolStripMenuItem.Click += new System.EventHandler(this.pixelXToolStripMenuItem_Click);
             // 
             // waveLengthToolStripMenuItem
             // 
             this.waveLengthToolStripMenuItem.Name = "waveLengthToolStripMenuItem";
-            this.waveLengthToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.waveLengthToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.waveLengthToolStripMenuItem.Text = "Длина волны";
             this.waveLengthToolStripMenuItem.Click += new System.EventHandler(this.waveLengthToolStripMenuItem_Click);
             // 
             // времяToolStripMenuItem
             // 
             this.времяToolStripMenuItem.Name = "времяToolStripMenuItem";
-            this.времяToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.времяToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
             this.времяToolStripMenuItem.Text = "Время";
             // 
             // количествоКривыхToolStripMenuItem
@@ -667,7 +670,7 @@
             this.измеренияToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.временныеРядыToolStripMenuItem,
             this.коррекцияToolStripMenuItem,
-            this.внешнийТриггерToolStripMenuItem,
+            this.extTriggerMenuItem,
             this.критическаяТочкаToolStripMenuItem});
             this.измеренияToolStripMenuItem.Name = "измеренияToolStripMenuItem";
             this.измеренияToolStripMenuItem.Size = new System.Drawing.Size(81, 20);
@@ -700,11 +703,12 @@
             this.коррекцияToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
             this.коррекцияToolStripMenuItem.Text = "Коррекция освещенности";
             // 
-            // внешнийТриггерToolStripMenuItem
+            // extTriggerMenuItem
             // 
-            this.внешнийТриггерToolStripMenuItem.Name = "внешнийТриггерToolStripMenuItem";
-            this.внешнийТриггерToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-            this.внешнийТриггерToolStripMenuItem.Text = "Внешний триггер";
+            this.extTriggerMenuItem.Name = "extTriggerMenuItem";
+            this.extTriggerMenuItem.Size = new System.Drawing.Size(218, 22);
+            this.extTriggerMenuItem.Text = "Внешний триггер";
+            this.extTriggerMenuItem.Click += new System.EventHandler(this.extTriggerMenuItem_Click);
             // 
             // критическаяТочкаToolStripMenuItem
             // 
@@ -805,7 +809,7 @@
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Button findPeakBtn;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.TextBox peakWidthInput;
+        private System.Windows.Forms.TextBox quantityPeakInput;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox thresholdInput;
         private System.Windows.Forms.Label notificationsLabel;
@@ -824,7 +828,7 @@
         private System.Windows.Forms.ToolStripMenuItem измеренияToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem временныеРядыToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem коррекцияToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem внешнийТриггерToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem extTriggerMenuItem;
         private System.Windows.Forms.ToolStripMenuItem критическаяТочкаToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pixelXToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem waveLengthToolStripMenuItem;

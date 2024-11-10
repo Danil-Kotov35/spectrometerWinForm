@@ -10,9 +10,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Drawing;
 using OxyPlot.Annotations;
+using System.IO;
 
 namespace WindowsFormsApp1
 {
+    // класс работающий с графиком
     internal class OxyPlotSchedule
     {
 
@@ -24,23 +26,24 @@ namespace WindowsFormsApp1
 
         public OxyPlotSchedule(float[,] data)
         {
-            this.data = data;
+            this.data = data;// получаем данные через конструктор
         }
 
+        // метод отрисовывает таблицу на форме
         public PlotView Addplot()
         {
 
-        //название графика 
-        plotModel = new PlotModel { Title = "" };
+         
+        plotModel = new PlotModel { Title = "" };//название графика
 
-            // Настройка осей с сеткой
-            var xAxis = new LinearAxis
+           
+            var xAxis = new LinearAxis // Настройка осей с сеткой
             {
                 Position = AxisPosition.Bottom,
                 Title = "Длина волны н / м",               
                 MajorGridlineStyle = LineStyle.Solid,   // Основные линии сетки
                 MinorGridlineStyle = LineStyle.Dot,      // Дополнительные линии сетки
-                MinimumPadding = 0.1,
+                MinimumPadding = 0.1, //отступы для корректного отображения графика
                 MaximumPadding = 0.1
             };
 
@@ -48,8 +51,8 @@ namespace WindowsFormsApp1
             {
                 Position = AxisPosition.Left,
                 Title = "Интенсивность",
-                MajorGridlineStyle = LineStyle.Solid,
-                MinorGridlineStyle = LineStyle.Dot,
+                MajorGridlineStyle = LineStyle.Solid,  // Основные линии сетки
+                MinorGridlineStyle = LineStyle.Dot, // Дополнительные линии сетки
                 MinimumPadding = 0.1,
                 MaximumPadding = 0.1
             };
@@ -72,6 +75,7 @@ namespace WindowsFormsApp1
 
                 lineSeries.Points.Add(new DataPoint(x, y));
             }
+
 
             // Добавляем серию в модель
             plotModel.Series.Add(lineSeries);           
@@ -152,6 +156,7 @@ namespace WindowsFormsApp1
 
         public void hidePlot()
         {
+            
             lineSeries.Points.Clear();
             plotModel.InvalidatePlot(true); // Обновляет график
 
