@@ -32,7 +32,7 @@ namespace WindowsFormsApp1
         private bool waveCorCheck;
         private bool nonlinCheck;
         private bool darkSpectCheck;
-
+        // проверка новой ветки
         public Form1()
         {
             InitializeComponent();
