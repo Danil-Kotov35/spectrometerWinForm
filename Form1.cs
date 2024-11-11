@@ -26,27 +26,22 @@ namespace WindowsFormsApp1
         ExtTrigger ExtTrigger = new ExtTrigger();
         private HP2000Wrapper wrapper = new HP2000Wrapper();
         private dynamic spectrometer = new SpectrometerWork();        
-        private dynamic data = new GetData(); // получение данных со спектрометра
+        private float[,] data; // получение данных со спектрометра
         private bool ContinuousScanningFlag; // флаг для работы с автоматическим сканированием
         private dynamic plotView;
         private bool waveCorCheck;
         private bool nonlinCheck;
         private bool darkSpectCheck;
-        // проверка новой ветки
         public Form1()
         {
-            InitializeComponent();
-
-            
-            
-            
+            InitializeComponent(); 
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             // =======работа с графиком========
             waveLengthToolStripMenuItem.Checked = true;// по дефолту отрисовываем график с длинами волн на оси Х
-            plotView = new OxyPlotSchedule(data.Data("spectrum_data.txt"));// подключение графика
+            plotView = new OxyPlotSchedule(spectrometer.saveData());// подключение графика
                                                                          
             var addPlot = plotView.Addplot();// ф-ция отрисовки графика
             plotView.hidePlot();// убираем старые значения  
@@ -76,8 +71,8 @@ namespace WindowsFormsApp1
 
             
             
-            // ЗАКОНСПЕКТИРОВАТЬ
-            ExtTrigger.onExtTriggerCheckBox.Checked = Properties.Settings.Default.onExtTriggerState;
+            
+            ExtTrigger.onExtTriggerCheckBox.Checked = Properties.Settings.Default.onExtTriggerState;//определяем состояние чекбокса котороый отвечает за внений триггер
         }
 
         //одиночное сканирование
@@ -93,33 +88,46 @@ namespace WindowsFormsApp1
             //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
             if (waveLengthToolStripMenuItem.Checked == true)
             {
-                spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false, true);// сохраняем данные в файл с длинами волн
+                data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false, true);// сохраняем данные в файл с длинами волн
             }
             else
             {
-                spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true, false);// сохраняем данные в файл с пикселями
+                data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true, false);// сохраняем данные в файл с пикселями
             }
 
-            data = new GetData().Data("spectrum_data.txt");// считываем обновленные данные из файла
 
             plotView.updatePlot(data, pixelXToolStripMenuItem.Checked, waveLengthToolStripMenuItem.Checked);// выводим новый график
 
-            // если кнопка в меню которая отвечает за автоматическое сохранение активна сохраняем данные автоматом
-            if (automaticSaveToolStripMenuItem.Checked == true)
-            {
-                new LoadAndSaveReadyData().automaticSaveData();               
-            }
-
+            // внешний триггер
             if (ExtTrigger.onExtTriggerCheckBox.Checked == true)
             {
                 notificationsLabel.Text = "Внешний триггер подключен.";
+                wrapper.getExtTrigSpectrum(timeMicros);
+                spectrometer.readyData(notificationsLabel, progressBar1);//проверяем данные на готовность
+                //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
+                if (waveLengthToolStripMenuItem.Checked == true)
+                {
+                    data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false, true);// сохраняем данные в файл с длинами волн
+                }
+                else
+                {
+                    data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true, false);// сохраняем данные в файл с пикселями
+                }
+
+                plotView.updatePlot(data, pixelXToolStripMenuItem.Checked, waveLengthToolStripMenuItem.Checked);// выводим новый график
+
+                wrapper.stopexttrig();// закрываем внешний триггер
             }
             else
             {
                 notificationsLabel.Text = "Внешний триггер не подключен.";
             }
 
-
+            // если кнопка в меню которая отвечает за автоматическое сохранение активна сохраняем данные автоматом
+            if (automaticSaveToolStripMenuItem.Checked == true)
+            {
+                new LoadAndSaveReadyData().automaticSaveData(data);
+            }
         }
  
         // непрерывное сканирование. Асинхронно выполняем одиночное сканирование в цикле до тех пор пока не изменим флаг
@@ -183,7 +191,7 @@ namespace WindowsFormsApp1
         // событие обрабатывает ручное сохранение спеткральных данных 
         private void manualSaveDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new LoadAndSaveReadyData().SaveReadyData();// сохраняем данные
+            new LoadAndSaveReadyData().SaveReadyData(data);// сохраняем данные
         }
 
         //событие переключает флаг автоматического сохранения
@@ -209,8 +217,8 @@ namespace WindowsFormsApp1
             pixelXToolStripMenuItem.Checked = true;// устанавливает флаг отображения данных в пикселях в положение truе      
             waveLengthToolStripMenuItem.Checked = false;//устанавливает флаг отображения данных в длинах влон в положение false
 
-            spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true, false);// вызываем метод сохранения данных для изменения и сохранения уже отсканированных спектральных данных
-            data = new GetData().Data("spectrum_data.txt");// считываем обновленные данные из файла
+            data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true, false);// вызываем метод сохранения данных для изменения и сохранения уже отсканированных спектральных данных
+            
 
             plotView.updatePlot(data, true, false);// обновляем график
 
@@ -224,8 +232,7 @@ namespace WindowsFormsApp1
             waveLengthToolStripMenuItem.Checked = true;//устанавливает флаг отображения данных в длинах волн в положение truе   
             pixelXToolStripMenuItem.Checked = false;// устанавливает флаг отображения данных в пикселях в положение false
 
-            spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false, true);// сохраняем данные в файл
-            data = new GetData().Data("spectrum_data.txt");// считываем обновленные данные из файла
+            data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false, true);// сохраняем данные в файл
             
             plotView.updatePlot(data, false, true);// обновляем график
 

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using System.Globalization;
 namespace WindowsFormsApp1
 {
     internal class LoadAndSaveReadyData
@@ -35,7 +35,7 @@ namespace WindowsFormsApp1
         }
 
         // ручное сохранение спектральных данных в файл
-        public void SaveReadyData()
+        public void SaveReadyData(float[,] data)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
@@ -47,22 +47,65 @@ namespace WindowsFormsApp1
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string filePath = saveFileDialog.FileName;
-                    string content = File.ReadAllText("spectrum_data.txt");
-                    // Сохранение содержимого в выбранный файл
-                    File.WriteAllText(filePath, content);
-                    MessageBox.Show($"Файл сохранен: {filePath}");
+
+
+                    if (data[0, 0] == 0.000)
+                    {
+                        using (StreamWriter writer = new StreamWriter(filePath))
+                        {
+                            // Запись данных
+                            for (int i = 0; i < data.GetLength(0); i++)
+                            {
+                                writer.WriteLine($"{i.ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
+                            }
+                        }
+                    }
+                    else
+                    {
+                         
+                        using (StreamWriter writer = new StreamWriter(filePath))
+                        {
+                            // Запись данных
+                            for (int i = 0; data[i,0] <= 1676; i++)
+                            {
+                                writer.WriteLine($"{data[i, 0].ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
+                            }
+                        }    
+                    }
                 }
             }
         }
 
         // автоматическое сохранение
-        public void automaticSaveData()
+        public void automaticSaveData(float[,] data)
         {      
             DateTime currentDate = DateTime.Now;// используем дату для формирования имени файла и исключения повторений
             string formattedDate = currentDate.ToString("dd_MM_yyyy_HH_mm_ss");
             string filePath = Path.Combine(Application.StartupPath, "data", "automatic saving") + "\\data" + formattedDate + ".txt";// имя и путь файла   
-            string content = File.ReadAllText("spectrum_data.txt");// данные из промежуточного файла
-            File.WriteAllText(filePath, content);
+
+            if (data[0, 0] == 0.000)
+            {
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    // Запись данных
+                    for (int i = 0; i < data.GetLength(0); i++)
+                    {
+                        writer.WriteLine($"{i.ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
+                    }
+                }
+            }
+            else
+            {
+
+                using (StreamWriter writer = new StreamWriter(filePath))
+                {
+                    // Запись данных
+                    for (int i = 0; data[i, 0] <= 1676; i++)
+                    {
+                        writer.WriteLine($"{data[i, 0].ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
+                    }
+                }
+            }
         }
     }
 }
