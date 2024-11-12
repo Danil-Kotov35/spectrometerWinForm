@@ -29,12 +29,13 @@ namespace WindowsFormsApp1
         private float[,] data; // получение данных со спектрометра
         private bool ContinuousScanningFlag; // флаг для работы с автоматическим сканированием
         private dynamic plotView;
+        
         private bool waveCorCheck;
         private bool nonlinCheck;
         private bool darkSpectCheck;
         public Form1()
         {
-            InitializeComponent(); 
+            InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -67,11 +68,11 @@ namespace WindowsFormsApp1
                 wrapper.initialize(); // инициализируем спектрометр
                 notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";
             }
-            
 
-            
-            
-            
+
+
+
+           
             ExtTrigger.onExtTriggerCheckBox.Checked = Properties.Settings.Default.onExtTriggerState;//определяем состояние чекбокса котороый отвечает за внений триггер
         }
 
@@ -81,18 +82,36 @@ namespace WindowsFormsApp1
             int timeMicros = int.Parse(timeMicrosInput.Text);// время сканирования
             int average = int.Parse(averageInput.Text); // усредненное сканирование
             int filter = int.Parse(filterInput.Text); // фильтр
+            float[,] tempData = new float[511, 2];
             
-            notificationsLabel.Text = spectrometer.loadData(timeMicros, average);//загружаем данные в спектрометр
-            spectrometer.readyData(notificationsLabel, progressBar1);//проверяем данные на готовность
+            // в цикле реализуем усредненое сканирование 
+            for(int i=1;i<=average;i++)
+            {
+                notificationsLabel.Text = spectrometer.loadData(timeMicros);//загружаем данные в спектрометр
+                spectrometer.readyData(notificationsLabel, progressBar1);//проверяем данные на готовность
 
-            //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
-            if (waveLengthToolStripMenuItem.Checked == true)
-            {
-                data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false, true);// сохраняем данные в файл с длинами волн
+                //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
+                if (waveLengthToolStripMenuItem.Checked == true)
+                {
+                    data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные в файл с длинами волн
+                }
+                else
+                {
+                    data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false);// сохраняем данные в файл с пикселями
+                }
+
+                // складываем полученные значения в промежуточном массиве
+                for(int j=0;j<511;j++)
+                {
+                    tempData[j, 0] += data[j, 0];
+                    tempData[j, 1] += data[j, 1];
+                }
+                
             }
-            else
+            // сумму значений делим на их количество (находим среднее арифметическое)
+            for(int i=0;i<511;i++)
             {
-                data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true, false);// сохраняем данные в файл с пикселями
+                data[i, 1] = tempData[i, 1]/average ;
             }
 
 
@@ -107,11 +126,11 @@ namespace WindowsFormsApp1
                 //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
                 if (waveLengthToolStripMenuItem.Checked == true)
                 {
-                    data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false, true);// сохраняем данные в файл с длинами волн
+                    data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные в файл с длинами волн
                 }
                 else
                 {
-                    data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true, false);// сохраняем данные в файл с пикселями
+                    data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck,false);// сохраняем данные в файл с пикселями
                 }
 
                 plotView.updatePlot(data, pixelXToolStripMenuItem.Checked, waveLengthToolStripMenuItem.Checked);// выводим новый график
@@ -217,7 +236,7 @@ namespace WindowsFormsApp1
             pixelXToolStripMenuItem.Checked = true;// устанавливает флаг отображения данных в пикселях в положение truе      
             waveLengthToolStripMenuItem.Checked = false;//устанавливает флаг отображения данных в длинах влон в положение false
 
-            data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true, false);// вызываем метод сохранения данных для изменения и сохранения уже отсканированных спектральных данных
+            data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false);// вызываем метод сохранения данных для изменения и сохранения уже отсканированных спектральных данных
             
 
             plotView.updatePlot(data, true, false);// обновляем график
@@ -232,7 +251,7 @@ namespace WindowsFormsApp1
             waveLengthToolStripMenuItem.Checked = true;//устанавливает флаг отображения данных в длинах волн в положение truе   
             pixelXToolStripMenuItem.Checked = false;// устанавливает флаг отображения данных в пикселях в положение false
 
-            data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false, true);// сохраняем данные в файл
+            data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные в файл
             
             plotView.updatePlot(data, false, true);// обновляем график
 

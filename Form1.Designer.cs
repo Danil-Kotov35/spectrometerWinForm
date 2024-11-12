@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.panel1 = new System.Windows.Forms.Panel();
             this.clearCurveBtn = new System.Windows.Forms.Button();
             this.stopScanBtn = new System.Windows.Forms.Button();
@@ -746,6 +747,7 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.MinimumSize = new System.Drawing.Size(1274, 730);
             this.Name = "Form1";
@@ -793,17 +795,10 @@
         private System.Windows.Forms.Panel panel9;
         private System.Windows.Forms.Panel panel7;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox timeMicrosInput;
         private System.Windows.Forms.CheckedListBox ProccesCheckedListBox;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox averageInput;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox ScanIntervalInput;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox filterInput;
-        private System.Windows.Forms.CheckBox darkSpectCh;
-        private System.Windows.Forms.CheckBox nonlinearCorCh;
-        private System.Windows.Forms.CheckBox waveformCorCh;
         private System.Windows.Forms.Button saveDarkBtn;
         private System.Windows.Forms.Button saveRefBtn;
         private System.Windows.Forms.Label label7;
@@ -812,8 +807,6 @@
         private System.Windows.Forms.TextBox quantityPeakInput;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.TextBox thresholdInput;
-        private System.Windows.Forms.Label notificationsLabel;
-        private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem toolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem loadSpectralDataMenuItem;
         private System.Windows.Forms.ToolStripMenuItem manualSaveDataToolStripMenuItem;
@@ -842,6 +835,15 @@
         private System.Windows.Forms.ToolStripMenuItem onSpectrometer;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label10;
+        public System.Windows.Forms.Label notificationsLabel;
+        public System.Windows.Forms.TextBox timeMicrosInput;
+        public System.Windows.Forms.TextBox averageInput;
+        public System.Windows.Forms.TextBox ScanIntervalInput;
+        public System.Windows.Forms.ComboBox filterInput;
+        public System.Windows.Forms.CheckBox darkSpectCh;
+        public System.Windows.Forms.CheckBox nonlinearCorCh;
+        public System.Windows.Forms.CheckBox waveformCorCh;
+        private System.Windows.Forms.MenuStrip menuStrip1;
     }
 }
 

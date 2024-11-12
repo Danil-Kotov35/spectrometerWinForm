@@ -19,7 +19,7 @@ namespace WindowsFormsApp1
         dynamic wrapper = new HP2000Wrapper();
 
         // загрузка данных в спектрометр. на вход идут время сканирования и количество усреднений 
-        public string loadData(int timeMicros, int average)
+        public string loadData(int timeMicros, int average = 1)
         {
                        
             wrapper.setAverage(average);//устанавливаем количество усреднений
@@ -62,7 +62,7 @@ namespace WindowsFormsApp1
         }
 
         //метод который сохраняет полученные данные в промежуточный файл из которого будет происходить чтение и отрисовка на графике
-        public float[,] saveData(int filter = 0, bool darkSpectraCor = false, bool nonLinearCor = false, bool waverformCor = false, bool Xpixel=false,bool XwaveLength=true)
+        public float[,] saveData(int filter = 0, bool darkSpectraCor = false, bool nonLinearCor = false, bool waverformCor = false,bool XwaveLength=true)
         {
             
             Spectrum data;
@@ -84,7 +84,7 @@ namespace WindowsFormsApp1
                         }
                     }
                 }
-                else if (Xpixel == true)
+                else
                 {
                     {
                         // Запись данных
