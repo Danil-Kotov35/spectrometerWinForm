@@ -28,8 +28,9 @@ namespace WindowsFormsApp1
                 }
                 else
                 {
-                    return "spectrum_data.txt";
                     
+                    return "spectrum_data.txt";
+
                 }
             }
         }
