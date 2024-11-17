@@ -151,8 +151,13 @@ namespace WindowsFormsApp1
                 
                 plotModel.ResetAllAxes();         // Сброс осей для автоцентровки данных
             }
-            
-            if(XwaveLength == true)
+            changeAxes();
+            plotModel.InvalidatePlot(true);    // Обновление графика
+        }
+
+        public void changeAxes(bool XwaveLength = true)
+        {
+            if (XwaveLength == true)
             {
                 plotModel.Axes[0].Title = "Длина волны н / м";
             }
@@ -162,7 +167,6 @@ namespace WindowsFormsApp1
             }
             plotModel.InvalidatePlot(true);    // Обновление графика
         }
-
 
         public void AddPeakAnnotations(int thresHold,int peakWidth)
         {

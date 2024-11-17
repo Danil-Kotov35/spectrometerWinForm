@@ -24,7 +24,7 @@ namespace WindowsFormsApp1
     
     public partial class Form1 : Form
     {
-        ExtTrigger ExtTrigger = new ExtTrigger();
+
         private HP2000Wrapper wrapper = new HP2000Wrapper();
         
         private dynamic spectrometer = new SpectrometerWork();        
@@ -50,8 +50,9 @@ namespace WindowsFormsApp1
             // =======работа с графиком========
             waveLengthToolStripMenuItem.Checked = true;// по дефолту отрисовываем график с длинами волн на оси Х
             plotView = new OxyPlotSchedule(spectrometer.saveData());// подключение графика
-                                                                         
+            
             var addPlot = plotView.Addplot();// ф-ция отрисовки графика
+            plotView.hidePlot(); // необходим для корректного отображения загруженных данных
             Controls.Add(addPlot);// Добавляем PlotView на форму
             
 
@@ -80,14 +81,14 @@ namespace WindowsFormsApp1
 
 
            
-            //ExtTrigger.onExtTriggerCheckBox.Checked = Properties.Settings.Default.onExtTriggerState;//определяем состояние чекбокса котороый отвечает за внений триггер
+
         }
 
         //одиночное сканирование
         private void oneScanBtn_Click(object sender, EventArgs e)
         {
             float[,] tempData = new float[512, 2];
-            //spectrometer.statusSpectrometer(StatusPanel, false);
+
             if (averageInput.Text != "" && timeMicrosInput.Text != "" && filterInput.Text != "") // && Regex.IsMatch(timeMicrosInput.Text, @"^\d+$") && Regex.IsMatch(averageInput.Text, @"^\d+$") && Regex.IsMatch(filterInput.Text, @"^\d+$")
             {
                 int timeMicros = int.Parse(timeMicrosInput.Text);// время сканирования
@@ -99,7 +100,16 @@ namespace WindowsFormsApp1
                 // в цикле реализуем усредненое сканирование 
                 for (int i = 1; i <= average; i++)
                 {
-                    notificationsLabel.Text = spectrometer.loadData(timeMicros);//загружаем данные в спектрометр
+                    // условие на поключение триггера
+                    if (extTriggerMenuItem.Checked == true)
+                    {
+                        wrapper.getExtTrigSpectrum(timeMicros);
+                    }
+                    else
+                    {
+                        notificationsLabel.Text = spectrometer.loadData(timeMicros);//загружаем данные в спектрометр
+                    }
+                    
                     spectrometer.readyData(notificationsLabel);//проверяем данные на готовность
 
                     dataWaveLen = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные с длинами волн
@@ -143,30 +153,7 @@ namespace WindowsFormsApp1
 
             
 
-            //// внешний триггер
-            //if (ExtTrigger.onExtTriggerCheckBox.Checked == true)
-            //{
-            //    notificationsLabel.Text = "Внешний триггер подключен.";
-            //    wrapper.getExtTrigSpectrum(timeMicros);
-            //    spectrometer.readyData(notificationsLabel, progressBar1);//проверяем данные на готовность
-            //    //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
-            //    if (waveLengthToolStripMenuItem.Checked == true)
-            //    {
-            //        data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные в файл с длинами волн
-            //    }
-            //    else
-            //    {
-            //        data = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false);// сохраняем данные в файл с пикселями
-            //    }
 
-            //    plotView.updatePlot(data, waveLengthToolStripMenuItem.Checked);// выводим новый график
-
-            //    wrapper.stopexttrig();// закрываем внешний триггер
-            //}
-            //else
-            //{
-            //    notificationsLabel.Text = "Внешний триггер не подключен.";
-            //}
 
 
 
@@ -175,7 +162,7 @@ namespace WindowsFormsApp1
             {
                 new LoadAndSaveReadyData().automaticSaveData(data);
             }
-            //spectrometer.statusSpectrometer(StatusPanel, true);
+
         }
  
         // непрерывное сканирование. Асинхронно выполняем одиночное сканирование в цикле до тех пор пока не изменим флаг
@@ -234,8 +221,11 @@ namespace WindowsFormsApp1
         private void loadSpectralDataMenuItem_Click(object sender, EventArgs e)
         {
             string pathReadyData = new LoadAndSaveReadyData().LoadReadyData();//получаем путь до нужного файла
-            downloadedData = new GetData().Data(pathReadyData);// считываем обновленные данные из файла
-            plotView.updatePlot(downloadedData, true);// выводим новый график
+            if (pathReadyData != null)
+            {   
+                downloadedData = new GetData().Data(pathReadyData);// считываем обновленные данные из файла
+                plotView.updatePlot(downloadedData, true);// выводим новый график
+            }
             
         }
 
@@ -251,7 +241,7 @@ namespace WindowsFormsApp1
             automaticSaveToolStripMenuItem.Checked = !automaticSaveToolStripMenuItem.Checked;//переключение автоматического сохранения
         }
 
-        // событие обрабатывает поиск пиковых занчений
+        // событие обрабатывает поиск пиковых значений
         private void findPeakBtn_Click(object sender, EventArgs e)
         {
             if(thresholdInput.Text != "" && quantityPeakInput.Text != "" && Regex.IsMatch(thresholdInput.Text, @"^\d+$") && Regex.IsMatch(quantityPeakInput.Text, @"^\d+$"))
@@ -271,16 +261,16 @@ namespace WindowsFormsApp1
         private void pixelXToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int filter = int.Parse(filterInput.Text);// парсим значение фильтра для метода сохранения новых данных
-            
+
             pixelXToolStripMenuItem.Checked = true;// устанавливает флаг отображения данных в пикселях в положение truе      
             waveLengthToolStripMenuItem.Checked = false;//устанавливает флаг отображения данных в длинах влон в положение false
 
-            
-            if(dataPixel != null)
+
+            if (dataPixel != null)
             {
                 plotView.updatePlot(dataPixel, false, false);// обновляем график
             }
-            
+
             if (downloadedData != null)
             {
                 for (int i = 0; i < downloadedData.GetLength(0); i++)
@@ -289,8 +279,8 @@ namespace WindowsFormsApp1
                 }
                 plotView.updatePlot(downloadedData, true, false);// обновляем график
             }
-            
-            
+            plotView.changeAxes(false); // изменяем ось на пиксели
+
 
 
         }
@@ -299,19 +289,19 @@ namespace WindowsFormsApp1
         private void waveLengthToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int filter = int.Parse(filterInput.Text);// парсим значение фильтра для метода сохранения новых данных
-            
+
             waveLengthToolStripMenuItem.Checked = true;//устанавливает флаг отображения данных в длинах волн в положение truе   
             pixelXToolStripMenuItem.Checked = false;// устанавливает флаг отображения данных в пикселях в положение false
 
 
-            
+
             float[] wavelengthArray = wrapper.getWavelength();
             if (dataWaveLen != null)
             {
                 plotView.updatePlot(dataWaveLen, false, true);// обновляем график
             }
 
-            if(downloadedData != null)
+            if (downloadedData != null)
             {
                 for (int i = 0; i < downloadedData.GetLength(0); i++)
                 {
@@ -319,7 +309,7 @@ namespace WindowsFormsApp1
                 }
                 plotView.updatePlot(downloadedData, true, true);// обновляем график
             }
-
+            plotView.changeAxes(true); // изменяем ось на длины волн
         }
         
         // чекбокс коррекции Формы фолны
@@ -346,8 +336,17 @@ namespace WindowsFormsApp1
 
         private void extTriggerMenuItem_Click(object sender, EventArgs e)
         {
-            ExtTrigger = new ExtTrigger();
-            ExtTrigger.Show();
+            extTriggerMenuItem.Checked = !extTriggerMenuItem.Checked;
+            if(extTriggerMenuItem.Checked == true) 
+            {
+                notificationsLabel.Text = "Внешний триггер подключен.";
+            }
+            else
+            {
+                notificationsLabel.Text = "";
+                wrapper.stopexttrig();
+            }
+            
         }
 
         private void saveToPNGMenuItem_Click(object sender, EventArgs e)

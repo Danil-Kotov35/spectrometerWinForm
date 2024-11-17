@@ -26,12 +26,7 @@ namespace WindowsFormsApp1
                     string filePath = openFileDialog.FileName;                   
                     return filePath;
                 }
-                else
-                {
-                    
-                    return "spectrum_data.txt";
-
-                }
+                return null;
             }
         }
 

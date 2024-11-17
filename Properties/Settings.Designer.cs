@@ -22,17 +22,5 @@ namespace WindowsFormsApp1.Properties {
                 return defaultInstance;
             }
         }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool onExtTriggerState {
-            get {
-                return ((bool)(this["onExtTriggerState"]));
-            }
-            set {
-                this["onExtTriggerState"] = value;
-            }
-        }
     }
 }
