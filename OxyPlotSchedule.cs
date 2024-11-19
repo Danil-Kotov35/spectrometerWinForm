@@ -24,7 +24,7 @@ namespace WindowsFormsApp1
         private PlotModel plotModel;
         private PlotView plotView;
         private LineSeries lineSeries;
-        private LineSeries lineSeries1;
+        private LineSeries lineSeriesLoadData;
         private LinearAxis xAxis;
         private LinearAxis yAxis;
 
@@ -38,7 +38,7 @@ namespace WindowsFormsApp1
         {
 
          
-        plotModel = new PlotModel { Title = "" };//название графика
+        plotModel = new PlotModel { Title = "", Background = OxyColor.Parse("#D5D5D5"), };//название графика
 
            
             xAxis = new LinearAxis // Настройка осей с сеткой
@@ -48,7 +48,9 @@ namespace WindowsFormsApp1
                 MajorGridlineStyle = LineStyle.Solid,   // Основные линии сетки
                 MinorGridlineStyle = LineStyle.Dot,      // Дополнительные линии сетки
                 MinimumPadding = 0.1, //отступы для корректного отображения графика
-                MaximumPadding = 0.1
+                MaximumPadding = 0.1,
+                
+                
             };
 
             yAxis = new LinearAxis
@@ -58,7 +60,8 @@ namespace WindowsFormsApp1
                 MajorGridlineStyle = LineStyle.Solid,  // Основные линии сетки
                 MinorGridlineStyle = LineStyle.Dot, // Дополнительные линии сетки
                 MinimumPadding = 0.1,
-                MaximumPadding = 0.1
+                MaximumPadding = 0.1,
+                
             };
 
             // Добавляем оси в модель
@@ -70,11 +73,12 @@ namespace WindowsFormsApp1
             {
                 Title = "Линия спектра",
                 StrokeThickness = 1
+                
             };
-            lineSeries1 = new LineSeries
+            lineSeriesLoadData = new LineSeries
             {
                 Title = "Загруженные данные",
-                StrokeThickness = 1
+                StrokeThickness = 1       
             };
 
             for (int i = 0; i < data.GetLength(0); i++)
@@ -88,15 +92,15 @@ namespace WindowsFormsApp1
 
             // Добавляем серию в модель
             plotModel.Series.Add(lineSeries);
-            plotModel.Series.Add(lineSeries1);
+            plotModel.Series.Add(lineSeriesLoadData);
 
             var plotView = new PlotView { Model = plotModel,  }; // Dock = DockStyle.Fill
             plotView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Bottom;
             // Изменение размера
-            plotView.Size = new Size(900, 490);
+            plotView.Size = new Size(880, 490);
 
             // Изменение позиции
-            plotView.Location = new Point(300, 50);
+            plotView.Location = new Point(290, 50);
             
             // возвращаем дефолтные значения графика
             plotView.MouseDoubleClick += PlotView_MouseDoubleClick;
@@ -123,7 +127,7 @@ namespace WindowsFormsApp1
             {
 
                 lineSeries.Points.Clear();         // Очистка старых данных
-                lineSeries1.Points.Clear();
+                lineSeriesLoadData.Points.Clear();
                 plotModel.Annotations.Clear(); // Очищаем все аннотации
                 this.data = data; // обновляем данные для корректного поиска пиков
                 for (int i = 0; i < data.GetLength(0); i++)
@@ -138,15 +142,15 @@ namespace WindowsFormsApp1
             }
             else
             {
-                lineSeries1.Points.Clear();         // Очистка старых данных
+                lineSeriesLoadData.Points.Clear();         // Очистка старых данных
                 plotModel.Annotations.Clear(); // Очищаем все аннотации
                 this.data = data; // обновляем данные для корректного поиска пиков
                 for (int i = 0; i < data.GetLength(0); i++)
                 {
                     float x = data[i, 0];
                     float y = data[i, 1];
-                    
-                    lineSeries1.Points.Add(new DataPoint(x, y));
+
+                    lineSeriesLoadData.Points.Add(new DataPoint(x, y));
                 }
                 
                 plotModel.ResetAllAxes();         // Сброс осей для автоцентровки данных
@@ -204,7 +208,7 @@ namespace WindowsFormsApp1
         {
 
             lineSeries.Points.Clear();
-            lineSeries1.Points.Clear();
+            lineSeriesLoadData.Points.Clear();
             plotModel.InvalidatePlot(true); // Обновляет график
 
         }

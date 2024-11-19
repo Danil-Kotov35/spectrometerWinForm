@@ -18,6 +18,7 @@ using System.IO;
 using static System.Net.WebRequestMethods;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 using System.Text.RegularExpressions;
+using System.Runtime.InteropServices;
 
 namespace WindowsFormsApp1
 {
@@ -43,12 +44,13 @@ namespace WindowsFormsApp1
         public Form1()
         {
             InitializeComponent();
+            ApplyDarkTitleBar();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             // =======работа с графиком========
-            waveLengthToolStripMenuItem.Checked = true;// по дефолту отрисовываем график с длинами волн на оси Х
+            axesWaveLenBtn.Checked = true;// по дефолту отрисовываем график с длинами волн на оси Х
             plotView = new OxyPlotSchedule(spectrometer.saveData());// подключение графика
             
             var addPlot = plotView.Addplot();// ф-ция отрисовки графика
@@ -74,6 +76,7 @@ namespace WindowsFormsApp1
             else
             {
                 wrapper.initialize(); // инициализируем спектрометр
+                
                 notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";
             }
 
@@ -94,6 +97,10 @@ namespace WindowsFormsApp1
                 int timeMicros = int.Parse(timeMicrosInput.Text);// время сканирования
                 int average = int.Parse(averageInput.Text); // усредненное сканирование
                 int filter = int.Parse(filterInput.Text); // фильтр
+                if(filter > 6)
+                {
+                    MessageBox.Show("Установите значение фильтра от 0 до 5");
+                }
                 progressBar1.Maximum = average;
                 progressBar1.Value = 0;
 
@@ -104,6 +111,7 @@ namespace WindowsFormsApp1
                     if (extTriggerMenuItem.Checked == true)
                     {
                         wrapper.getExtTrigSpectrum(timeMicros);
+                        notificationsLabel.Text = "Ожидаю сигнал триггера";
                     }
                     else
                     {
@@ -116,7 +124,7 @@ namespace WindowsFormsApp1
                     dataPixel = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false);// сохраняем данные с пикселями
 
                     //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
-                    if (waveLengthToolStripMenuItem.Checked == true)
+                    if (axesWaveLenBtn.Checked == true)
                     {
                         data = dataWaveLen;
                     }
@@ -124,10 +132,6 @@ namespace WindowsFormsApp1
                     {
                         data = dataPixel;
                     }
-
-                                          
-                        
-
 
                     // складываем полученные значения в промежуточном массиве
                     for (int j = 0; j < 512; j++)
@@ -149,13 +153,7 @@ namespace WindowsFormsApp1
             }
             
 
-            plotView.updatePlot(data, false, waveLengthToolStripMenuItem.Checked);// выводим новый график                      
-
-            
-
-
-
-
+            plotView.updatePlot(data, false, axesWaveLenBtn.Checked);// выводим новый график                      
 
             // если кнопка в меню которая отвечает за автоматическое сохранение активна сохраняем данные автоматом
             if (automaticSaveToolStripMenuItem.Checked == true)
@@ -163,8 +161,15 @@ namespace WindowsFormsApp1
                 new LoadAndSaveReadyData().automaticSaveData(data);
             }
 
+            parameterPanel.Visible = false;
+            temperatureLabel.Text = wrapper.getCCDTecTemperature();
         }
- 
+
+
+
+
+
+
         // непрерывное сканирование. Асинхронно выполняем одиночное сканирование в цикле до тех пор пока не изменим флаг
         async private void ContinScanBtn_Click(object sender, EventArgs e)
         {
@@ -177,7 +182,8 @@ namespace WindowsFormsApp1
                 }
                 
             });
-            
+            parameterPanel.Visible = !parameterPanel.Visible;
+
         }
 
         // устанавливает флаг на окончание автоматического сканирования
@@ -203,9 +209,6 @@ namespace WindowsFormsApp1
                 wrapper.initialize(); // инициализируем спектрометр
                 notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";
             }
-
-            
-
         }
 
         // кнопка убирает линию графика
@@ -226,20 +229,18 @@ namespace WindowsFormsApp1
                 downloadedData = new GetData().Data(pathReadyData);// считываем обновленные данные из файла
                 plotView.updatePlot(downloadedData, true);// выводим новый график
             }
-            
+            parameterPanel.Visible = false;
+
         }
 
         // событие обрабатывает ручное сохранение спеткральных данных 
         private void manualSaveDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new LoadAndSaveReadyData().SaveReadyData(data);// сохраняем данные
+            parameterPanel.Visible = false;
         }
 
-        //событие переключает флаг автоматического сохранения
-        private void automaticSaveToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            automaticSaveToolStripMenuItem.Checked = !automaticSaveToolStripMenuItem.Checked;//переключение автоматического сохранения
-        }
+
 
         // событие обрабатывает поиск пиковых значений
         private void findPeakBtn_Click(object sender, EventArgs e)
@@ -263,7 +264,7 @@ namespace WindowsFormsApp1
             int filter = int.Parse(filterInput.Text);// парсим значение фильтра для метода сохранения новых данных
 
             pixelXToolStripMenuItem.Checked = true;// устанавливает флаг отображения данных в пикселях в положение truе      
-            waveLengthToolStripMenuItem.Checked = false;//устанавливает флаг отображения данных в длинах влон в положение false
+            axesWaveLenBtn.Checked = false;//устанавливает флаг отображения данных в длинах влон в положение false
 
 
             if (dataPixel != null)
@@ -290,7 +291,7 @@ namespace WindowsFormsApp1
         {
             int filter = int.Parse(filterInput.Text);// парсим значение фильтра для метода сохранения новых данных
 
-            waveLengthToolStripMenuItem.Checked = true;//устанавливает флаг отображения данных в длинах волн в положение truе   
+            axesWaveLenBtn.Checked = true;//устанавливает флаг отображения данных в длинах волн в положение truе   
             pixelXToolStripMenuItem.Checked = false;// устанавливает флаг отображения данных в пикселях в положение false
 
 
@@ -336,7 +337,7 @@ namespace WindowsFormsApp1
 
         private void extTriggerMenuItem_Click(object sender, EventArgs e)
         {
-            extTriggerMenuItem.Checked = !extTriggerMenuItem.Checked;
+            
             if(extTriggerMenuItem.Checked == true) 
             {
                 notificationsLabel.Text = "Внешний триггер подключен.";
@@ -354,6 +355,32 @@ namespace WindowsFormsApp1
             plotView.savePlotPNG();
         }
 
-        
+        private void parametersBtn_Click(object sender, EventArgs e)
+        {
+            parameterPanel.Visible = !parameterPanel.Visible;
+        }
+
+        async private void temperatureStatus()
+        {
+            await Task.Run(() =>
+            {
+                while (ContinuousScanningFlag == true)
+                {
+                    temperatureLabel.Text = wrapper.getCCDTecTemperature();
+                }
+
+            });
+        }
+
+        private void ApplyDarkTitleBar()
+        {
+            int DWMWA_USE_IMMERSIVE_DARK_MODE = 20; // Атрибут для темной темы
+            int isDarkModeEnabled = 1; // Включить темную тему
+
+            // Устанавливаем атрибут для текущего окна
+            DwmSetWindowAttribute(this.Handle, DWMWA_USE_IMMERSIVE_DARK_MODE, ref isDarkModeEnabled, sizeof(int));
+        }
+        [DllImport("dwmapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
     }
 }
