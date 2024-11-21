@@ -15,10 +15,12 @@ using OxyPlot.WindowsForms;
 using HP2000_wrapper;
 using System.Threading;
 using System.IO;
-using static System.Net.WebRequestMethods;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
+
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using WindowsFormsApp1;
 
 namespace WindowsFormsApp1
 {
@@ -34,17 +36,25 @@ namespace WindowsFormsApp1
         private float[,] dataWaveLen;
         private float[,] dataPixel;
         private float[,] downloadedData;
-       
+        private float[,] darkModeData = new float[512,2];
+
         private bool ContinuousScanningFlag; // флаг для работы с автоматическим сканированием
         private dynamic plotView;
         
         private bool waveCorCheck;
         private bool nonlinCheck;
         private bool darkSpectCheck;
+        private int qtLines;
+        private int qtCount = 0;
+        private bool isOpen;
+
         public Form1()
         {
             InitializeComponent();
             ApplyDarkTitleBar();
+            
+
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -60,129 +70,52 @@ namespace WindowsFormsApp1
 
             // =======работа со спектрометром========
             // подключение спектрометра
-            bool openSpectr = wrapper.openSpectraMeter();
+            isOpen = wrapper.openSpectraMeter();
             
             //spectrometer.statusSpectrometer(StatusPanel,true);
 
             // если спектрометр не подключен запрещаем сканирование
-            if (openSpectr != true)
+            if (isOpen != true)
             {
                 oneScanBtn.Enabled = false;
                 ContinScanBtn.Enabled = false;
                 stopScanBtn.Enabled = false;
+                closeSpectrometerBtn.Enabled = false;
                 notificationsLabel.Text = "Не удалось подключиться к спектрометру.";
                 MessageBox.Show("Спектрометр не подключен!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             else
             {
-                wrapper.initialize(); // инициализируем спектрометр
-                
+                wrapper.initialize(); // инициализируем спектрометр               
                 notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";
+                onSpectrometer.Enabled = false;
             }
 
+            quantityLines.SelectedIndex = 0;// выставляем дефолтное количесство линий графика
+
+            
 
 
-
-           
 
         }
 
         //одиночное сканирование
-        private void oneScanBtn_Click(object sender, EventArgs e)
+        private async void oneScanBtn_Click(object sender, EventArgs e)
         {
-            float[,] tempData = new float[512, 2];
-
-            if (averageInput.Text != "" && timeMicrosInput.Text != "" && filterInput.Text != "") // && Regex.IsMatch(timeMicrosInput.Text, @"^\d+$") && Regex.IsMatch(averageInput.Text, @"^\d+$") && Regex.IsMatch(filterInput.Text, @"^\d+$")
-            {
-                int timeMicros = int.Parse(timeMicrosInput.Text);// время сканирования
-                int average = int.Parse(averageInput.Text); // усредненное сканирование
-                int filter = int.Parse(filterInput.Text); // фильтр
-                if(filter > 6)
-                {
-                    MessageBox.Show("Установите значение фильтра от 0 до 5");
-                }
-                progressBar1.Maximum = average;
-                progressBar1.Value = 0;
-
-                // в цикле реализуем усредненое сканирование 
-                for (int i = 1; i <= average; i++)
-                {
-                    // условие на поключение триггера
-                    if (extTriggerMenuItem.Checked == true)
-                    {
-                        wrapper.getExtTrigSpectrum(timeMicros);
-                        notificationsLabel.Text = "Ожидаю сигнал триггера";
-                    }
-                    else
-                    {
-                        notificationsLabel.Text = spectrometer.loadData(timeMicros);//загружаем данные в спектрометр
-                    }
-                    
-                    spectrometer.readyData(notificationsLabel);//проверяем данные на готовность
-
-                    dataWaveLen = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные с длинами волн
-                    dataPixel = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false);// сохраняем данные с пикселями
-
-                    //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
-                    if (axesWaveLenBtn.Checked == true)
-                    {
-                        data = dataWaveLen;
-                    }
-                    else
-                    {
-                        data = dataPixel;
-                    }
-
-                    // складываем полученные значения в промежуточном массиве
-                    for (int j = 0; j < 512; j++)
-                    {
-                        tempData[j, 0] += data[j, 0];
-                        tempData[j, 1] += data[j, 1];
-                    }
-                    progressBar1.Value++;
-                }
-                // сумму значений делим на их количество (находим среднее арифметическое)
-                for (int i = 0; i < 512; i++)
-                {
-                    data[i, 1] = tempData[i, 1] / average;
-                }
-            }
-            else
-            {
-                MessageBox.Show("Некорректные значения!!!");
-            }
-            
-
-            plotView.updatePlot(data, false, axesWaveLenBtn.Checked);// выводим новый график                      
-
-            // если кнопка в меню которая отвечает за автоматическое сохранение активна сохраняем данные автоматом
-            if (automaticSaveToolStripMenuItem.Checked == true)
-            {
-                new LoadAndSaveReadyData().automaticSaveData(data);
-            }
-
-            parameterPanel.Visible = false;
-            temperatureLabel.Text = wrapper.getCCDTecTemperature();
+          await spectrometerScanning();
         }
-
-
-
-
-
 
         // непрерывное сканирование. Асинхронно выполняем одиночное сканирование в цикле до тех пор пока не изменим флаг
         async private void ContinScanBtn_Click(object sender, EventArgs e)
         {
             ContinuousScanningFlag = true;
-            await Task.Run(() =>
+            
+            while (ContinuousScanningFlag == true)
             {
-                while (ContinuousScanningFlag == true)
-                {
-                    oneScanBtn_Click(null, EventArgs.Empty);
-                }
-                
-            });
-            parameterPanel.Visible = !parameterPanel.Visible;
+                await spectrometerScanning();
+            }         
+            
+            parameterPanel.Visible = false;
 
         }
 
@@ -197,27 +130,34 @@ namespace WindowsFormsApp1
         {
             bool openSpectr = wrapper.openSpectraMeter();
 
-            if (openSpectr != true)
+            if (isOpen != true)
             {
                 notificationsLabel.Text = "Не удалось подключиться к спектрометру.";
             }
             else
             {
+
                 oneScanBtn.Enabled = true;
                 ContinScanBtn.Enabled = true;
                 stopScanBtn.Enabled = true;
                 wrapper.initialize(); // инициализируем спектрометр
                 notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";
+                isOpen = true;
+                onSpectrometer.Enabled = false;
+                closeSpectrometerBtn.Enabled = true;
             }
         }
 
-        // кнопка убирает линию графика
+        // кнопка очищает график
         private void clearCurveBtn_Click(object sender, EventArgs e)
         {
+            
             dataWaveLen = null;
             dataPixel = null;
             downloadedData = null;
             plotView.hidePlot();// убираем старые значения 
+            
+
         }
 
         // событие обрабатывает загрузку сторонних файлов 
@@ -268,7 +208,7 @@ namespace WindowsFormsApp1
 
 
             if (dataPixel != null)
-            {
+            {                
                 plotView.updatePlot(dataPixel, false, false);// обновляем график
             }
 
@@ -281,9 +221,6 @@ namespace WindowsFormsApp1
                 plotView.updatePlot(downloadedData, true, false);// обновляем график
             }
             plotView.changeAxes(false); // изменяем ось на пиксели
-
-
-
         }
 
         //событие обрабатывает переключение оси Х на длины волн
@@ -299,6 +236,7 @@ namespace WindowsFormsApp1
             float[] wavelengthArray = wrapper.getWavelength();
             if (dataWaveLen != null)
             {
+                
                 plotView.updatePlot(dataWaveLen, false, true);// обновляем график
             }
 
@@ -313,6 +251,8 @@ namespace WindowsFormsApp1
             plotView.changeAxes(true); // изменяем ось на длины волн
         }
         
+
+
         // чекбокс коррекции Формы фолны
         private void waveformCorCh_CheckedChanged(object sender, EventArgs e)
         {
@@ -344,7 +284,7 @@ namespace WindowsFormsApp1
             }
             else
             {
-                notificationsLabel.Text = "";
+                notificationsLabel.Text = "Внешний триггер отключен";
                 wrapper.stopexttrig();
             }
             
@@ -360,13 +300,23 @@ namespace WindowsFormsApp1
             parameterPanel.Visible = !parameterPanel.Visible;
         }
 
-        async private void temperatureStatus()
+        async private Task spectrometerStatus()
         {
-            await Task.Run(() =>
+            await Task.Run(async() =>
             {
-                while (ContinuousScanningFlag == true)
+                while (true)
                 {
-                    temperatureLabel.Text = wrapper.getCCDTecTemperature();
+                    
+                    if (wrapper.openSpectraMeter() == true)
+                    {
+                        StatusPanel.BackColor = Color.Green; // Устанавливаем зелёный
+                    }
+                    else
+                    {
+                        StatusPanel.BackColor = Color.Red; // Устанавливаем красный
+                    }
+                    
+                    await Task.Delay(1000);
                 }
 
             });
@@ -382,5 +332,181 @@ namespace WindowsFormsApp1
         }
         [DllImport("dwmapi.dll", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern int DwmSetWindowAttribute(IntPtr hwnd, int dwAttribute, ref int pvAttribute, int cbAttribute);
+
+
+
+        private void darkModeBtn_Click(object sender, EventArgs e)
+        {
+            darkModeBtn.Checked = !darkModeBtn.Checked;
+            if (darkModeBtn.Checked )
+            {
+                oneScanBtn_Click(null, EventArgs.Empty);
+
+            }
+            
+            darkModeData = data;
+            
+        }
+
+        private void loadDarkModeBtn_Click(object sender, EventArgs e)
+        {
+            darkModeBtn.Checked = true;
+            string pathReadyData = new LoadAndSaveReadyData().LoadReadyData();//получаем путь до нужного файла
+            if (pathReadyData != null)
+            {
+                downloadedData = new GetData().Data(pathReadyData);// считываем обновленные данные из файла
+                darkModeData = downloadedData;
+               
+            }
+        }
+
+        private void saveDarkMode_Click(object sender, EventArgs e)
+        {
+            new LoadAndSaveReadyData().SaveReadyData(darkModeData);// сохраняем данные
+        }
+
+
+
+        private void parameterQuit_Click(object sender, EventArgs e)
+        {
+            parameterPanel.Visible = false;
+        }
+
+        async private Task spectrometerScanning()
+        {
+
+            await Task.Run(async() =>
+            {
+                float[,] tempData = new float[512, 2];
+
+                if (averageInput.Text != "" && timeMicrosInput.Text != "" && filterInput.Text != "") // && Regex.IsMatch(timeMicrosInput.Text, @"^\d+$") && Regex.IsMatch(averageInput.Text, @"^\d+$") && Regex.IsMatch(filterInput.Text, @"^\d+$")
+                {
+                    int timeMicros = int.Parse(timeMicrosInput.Text);// время сканирования
+                    int average = int.Parse(averageInput.Text); // усредненное сканирование
+                    int filter = int.Parse(filterInput.Text); // фильтр
+                    if (filter > 6)
+                    {
+                        MessageBox.Show("Установите значение фильтра от 0 до 5");
+                    }
+                    progressBar1.Maximum = average;
+                    progressBar1.Value = 0;
+
+                    // в цикле реализуем усредненое сканирование 
+                    for (int i = 1; i <= average; i++)
+                    {
+                        // условие на поключение триггера
+                        if (extTriggerMenuItem.Checked == true)
+                        {
+
+                            int j = 0;
+                            wrapper.getExtTrigSpectrum(timeMicros);
+
+                            while (extTriggerMenuItem.Checked == true)
+                            {
+                                notificationsLabel.Invoke(new Action(() =>
+                                {
+                                    notificationsLabel.Text = $"Ожидаю триггер: {j++} сек";
+                                }));
+                                oneScanBtn.Enabled = false;
+                                if (wrapper.getSpectrumDataReadyFlag() == 1)
+                                {
+                                    notificationsLabel.Invoke(new Action(() =>
+                                    {
+                                        notificationsLabel.Text = $"данные триггера готовы";
+                                    }));
+                                    break;
+                                }
+                                await Task.Delay(1000);
+                            }
+                            oneScanBtn.Enabled = true;
+
+
+                        }
+                        else
+                        {
+                            notificationsLabel.Text = spectrometer.loadData(timeMicros);//загружаем данные в спектрометр
+                            spectrometer.readyData(notificationsLabel);
+
+                        }
+
+                        dataWaveLen = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные с длинами волн
+                        dataPixel = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false);// сохраняем данные с пикселями
+
+                        //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
+                        if (axesWaveLenBtn.Checked == true)
+                        {
+                            data = dataWaveLen;
+                        }
+                        else
+                        {
+                            data = dataPixel;
+                        }
+
+                        // складываем полученные значения в промежуточном массиве
+                        for (int j = 0; j < 512; j++)
+                        {
+                            tempData[j, 0] += data[j, 0];
+                            tempData[j, 1] += data[j, 1];
+                        }
+                        progressBar1.Value++;
+                    }
+                    // сумму значений делим на их количество (находим среднее арифметическое)
+                    for (int i = 0; i < 512; i++)
+                    {
+                        data[i, 1] = tempData[i, 1] / average;
+                    }
+                }
+                else
+                {
+                    MessageBox.Show("Некорректные значения!!!");
+                }
+
+                if (darkModeBtn.Checked == true)
+                {
+                    for (int i = 0; i < data.GetLength(0); i++)
+                    {
+                        data[i, 1] -= darkModeData[i, 1];
+                        dataPixel[i, 1] = data[i, 1];
+                        dataWaveLen[i, 1] = data[i, 1];
+                    }
+                }
+
+                qtLines = int.Parse(quantityLines.Text);
+                plotView.updatePlot(data, false, axesWaveLenBtn.Checked, qtLines);// выводим новый график
+                plotView.changeAxes(axesWaveLenBtn.Checked);
+
+                // если кнопка в меню которая отвечает за автоматическое сохранение активна сохраняем данные автоматом
+                if (automaticSaveToolStripMenuItem.Checked == true)
+                {
+                    new LoadAndSaveReadyData().automaticSaveData(data);
+                }
+
+                tempData = null;
+                parameterPanel.Visible = false;
+                
+            });
+        }
+
+        private void closeSpectrometerBtn_Click(object sender, EventArgs e)
+        {
+            bool flag = wrapper.closeSpectraMeter();
+            if (flag == true)
+            {
+                notificationsLabel.Text = "Соединение со спектрометром закрыто!";
+                onSpectrometer.Enabled = true;
+                closeSpectrometerBtn.Enabled = false;
+                oneScanBtn.Enabled = false;
+                ContinScanBtn.Enabled = false;
+                stopScanBtn.Enabled = false;
+            }
+            else
+            {
+                notificationsLabel.Text = "Соединение со спектрометром не было закрыто!";
+            }
+        }
     }
 }
+
+
+
+

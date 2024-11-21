@@ -47,7 +47,6 @@ namespace WindowsFormsApp1
             {
                 dataReadyFlag = wrapper.getSpectrumDataReadyFlag();//метод который проверяет готовность 
             }
-
             if (dataReadyFlag == 1)
             {
                 notificationsLabel.Text = "данные спектрометра готовы!";
@@ -57,7 +56,6 @@ namespace WindowsFormsApp1
             {
                 notificationsLabel.Text = "Что-то пошло не так";
             }
-
         }
 
         //метод который сохраняет полученные данные в массив из которого будет происходить чтение и отрисовка на графике
@@ -96,80 +94,11 @@ namespace WindowsFormsApp1
                     }
                 }
             }
+            data.array = null;
             return rezultData;
-        }
-
-
-
-        async public void statusSpectrometer(Panel StatusPanel, bool flag)
-        {
-
-
-            if (flag)
-            {
-                await Task.Run(() =>
-                {
-                    while (true)
-                    {
-                        int status = wrapper.initialize();
-                        if (status == 0)
-                        {
-                            StatusPanel.BackColor = Color.Green; // Устанавливаем зелёный
-                        }
-                        else
-                        {
-                            StatusPanel.BackColor = Color.Red; // Устанавливаем красный
-                        }
-                        
-                    }
-
-                });
-
-            }
-            else
-            {
-                await Task.Run(() => { });
-            }
-        }
+        }   
     }
 }
 
 
 
-//public float[,] saveData(int filter = 0, bool darkSpectraCor = false, bool nonLinearCor = false, bool waverformCor = false, bool XwaveLength = true)
-//{
-
-//    Spectrum data;
-
-//    data = wrapper.ReadSpectrum();// массив с данными спектрометра(у)
-//    float[] filterData = wrapper.dataProcess(data.array, filter, darkSpectraCor, nonLinearCor, waverformCor);// метод обрабатывает сырые значения со спеткрометра с учетом фильтров            
-//    float[,] rezultData = new float[512, 2];
-//    if (data.valid_flag == SpectrumDataValidFlag.SPECTRUMDATA_VALID)
-//    {
-//        if (XwaveLength == true)// условие проверяет ось какого вида мы используем в данный момент
-//        {
-//            float[] wavelengthArray = wrapper.getWavelength();// массив с длинами волн(х) 
-//            {
-//                // Запись данных
-//                for (int i = 0; wavelengthArray[i] <= 1679; i++) // !!!жесткая привязка к длине волны надо исправить!!!
-//                {
-//                    rezultData[i, 0] = wavelengthArray[i];
-//                    rezultData[i, 1] = filterData[i];
-//                }
-//            }
-//        }
-//        else
-//        {
-//            {
-//                // Запись данных
-//                for (int i = 0; i < rezultData.GetLength(0); i++)
-//                {
-//                    rezultData[i, 0] = i;
-//                    rezultData[i, 1] = filterData[i];
-
-//                }
-//            }
-//        }
-//    }
-//    return rezultData;
-//}

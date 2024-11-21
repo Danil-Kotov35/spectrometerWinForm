@@ -6,10 +6,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
+using HP2000_wrapper;
 namespace WindowsFormsApp1
 {
     internal class LoadAndSaveReadyData
     {
+        dynamic wrapper = new HP2000Wrapper();
         // загрузка сторонних файлов
         public string LoadReadyData() 
         {
@@ -58,11 +60,11 @@ namespace WindowsFormsApp1
                     }
                     else
                     {
-                         
+                        float[] wavelengthArray = wrapper.getWavelength();// массив с длинами волн(х) 
                         using (StreamWriter writer = new StreamWriter(filePath))
                         {
                             // Запись данных
-                            for (int i = 0; data[i,0] <= 1676; i++)
+                            for (int i = 0; wavelengthArray[i] <= 1679; i++)
                             {
                                 writer.WriteLine($"{data[i, 0].ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
                             }

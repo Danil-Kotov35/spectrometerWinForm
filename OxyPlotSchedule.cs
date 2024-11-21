@@ -24,9 +24,14 @@ namespace WindowsFormsApp1
         private PlotModel plotModel;
         private PlotView plotView;
         private LineSeries lineSeries;
+        private LineSeries lineSeries2;
+        private LineSeries lineSeries3;
+        private LineSeries lineSeries4;
+        private LineSeries lineSeries5;
         private LineSeries lineSeriesLoadData;
         private LinearAxis xAxis;
         private LinearAxis yAxis;
+        private int countLines = 0;
 
         public OxyPlotSchedule(float[,] data)
         {
@@ -75,12 +80,45 @@ namespace WindowsFormsApp1
                 StrokeThickness = 1
                 
             };
+
+            lineSeries2 = new LineSeries
+            {
+                Title = "Линия спектра",
+                StrokeThickness = 1,
+                
+
+            };
+
+            lineSeries3 = new LineSeries
+            {
+                Title = "Линия спектра",
+                StrokeThickness = 1
+
+            };
+
+            lineSeries4 = new LineSeries
+            {
+                Title = "Линия спектра",
+                StrokeThickness = 1
+
+            };
+
+            lineSeries5 = new LineSeries
+            {
+                Title = "Линия спектра",
+                StrokeThickness = 1
+
+            };
+
             lineSeriesLoadData = new LineSeries
             {
                 Title = "Загруженные данные",
                 StrokeThickness = 1       
             };
 
+            
+            
+            
             for (int i = 0; i < data.GetLength(0); i++)
             {
                 float x = data[i, 0];
@@ -92,6 +130,10 @@ namespace WindowsFormsApp1
 
             // Добавляем серию в модель
             plotModel.Series.Add(lineSeries);
+            plotModel.Series.Add(lineSeries2);
+            plotModel.Series.Add(lineSeries3);
+            plotModel.Series.Add(lineSeries4);
+            plotModel.Series.Add(lineSeries5);
             plotModel.Series.Add(lineSeriesLoadData);
 
             var plotView = new PlotView { Model = plotModel,  }; // Dock = DockStyle.Fill
@@ -104,6 +146,17 @@ namespace WindowsFormsApp1
             
             // возвращаем дефолтные значения графика
             plotView.MouseDoubleClick += PlotView_MouseDoubleClick;
+            
+            // Создаём пользовательский контроллер
+            var customController = new PlotController();
+
+            // Настраиваем выделение области с использованием левой кнопки мыши
+            customController.BindMouseDown(OxyMouseButton.Left, PlotCommands.ZoomRectangle);
+            // Настраиваем отображение значений точки по средней кнопке мыши
+            customController.BindMouseDown(OxyMouseButton.Middle, PlotCommands.Track);
+
+            // Применяем контроллер
+            plotView.Controller = customController;
             return plotView;
         }
 
@@ -120,13 +173,23 @@ namespace WindowsFormsApp1
         }
 
         
-        public void updatePlot(float[,] data,bool lineSeriesflag = false, bool XwaveLength = true)
+        public void updatePlot(float[,] data,bool lineSeriesflag = false, bool XwaveLength = true,int qtLines = 1)
         {
             
             if (data[0,1] != 0 && !lineSeriesflag) 
             {
-
-                lineSeries.Points.Clear();         // Очистка старых данных
+                
+                if (countLines >= qtLines)
+                {
+                    // Очистка старых данных
+                    lineSeries.Points.Clear();
+                    lineSeries2.Points.Clear();
+                    lineSeries3.Points.Clear();
+                    lineSeries4.Points.Clear();
+                    lineSeries5.Points.Clear();
+                    countLines = 0;
+                }
+                
                 lineSeriesLoadData.Points.Clear();
                 plotModel.Annotations.Clear(); // Очищаем все аннотации
                 this.data = data; // обновляем данные для корректного поиска пиков
@@ -135,10 +198,28 @@ namespace WindowsFormsApp1
                     float x = data[i, 0];
                     float y = data[i, 1];
 
-                    lineSeries.Points.Add(new DataPoint(x, y));
+                    switch(countLines)
+                    {
+                        case 0:
+                            lineSeries.Points.Add(new DataPoint(x, y));
+                            break;
+                        case 1:
+                            lineSeries2.Points.Add(new DataPoint(x, y));
+                            break;
+                        case 2:
+                            lineSeries3.Points.Add(new DataPoint(x, y));
+                            break;
+                        case 3:
+                            lineSeries4.Points.Add(new DataPoint(x, y));
+                            break;
+                        case 4:
+                            lineSeries5.Points.Add(new DataPoint(x, y));
+                            break;
+                    }   
                 }
                 plotModel.ResetAllAxes();         // Сброс осей для автоцентровки данных
                 
+                countLines++;
             }
             else
             {
@@ -208,7 +289,13 @@ namespace WindowsFormsApp1
         {
 
             lineSeries.Points.Clear();
+            lineSeries2.Points.Clear();
+            lineSeries3.Points.Clear();
+            lineSeries4.Points.Clear();
+            lineSeries5.Points.Clear();
             lineSeriesLoadData.Points.Clear();
+            plotModel.Annotations.Clear();
+            countLines = 0;
             plotModel.InvalidatePlot(true); // Обновляет график
 
         }
