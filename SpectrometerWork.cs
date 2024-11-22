@@ -46,6 +46,8 @@ namespace WindowsFormsApp1
             while (dataReadyFlag != 1)
             {
                 dataReadyFlag = wrapper.getSpectrumDataReadyFlag();//метод который проверяет готовность 
+                notificationsLabel.Text = "Начат сбор спектра.";
+                
             }
             if (dataReadyFlag == 1)
             {

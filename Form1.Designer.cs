@@ -64,6 +64,7 @@
             this.darkModeBtn = new Guna.UI2.WinForms.Guna2Button();
             this.label14 = new System.Windows.Forms.Label();
             this.guna2Panel5 = new Guna.UI2.WinForms.Guna2Panel();
+            this.closeSpectrometerBtn = new Guna.UI2.WinForms.Guna2Button();
             this.quantityLines = new Guna.UI2.WinForms.Guna2ComboBox();
             this.label15 = new System.Windows.Forms.Label();
             this.temperatureLabel = new System.Windows.Forms.Label();
@@ -71,7 +72,7 @@
             this.extTriggerMenuItem = new Guna.UI2.WinForms.Guna2CheckBox();
             this.label12 = new System.Windows.Forms.Label();
             this.onSpectrometer = new Guna.UI2.WinForms.Guna2Button();
-            this.guna2Button5 = new Guna.UI2.WinForms.Guna2Button();
+            this.infoSpectrometerBtn = new Guna.UI2.WinForms.Guna2Button();
             this.label11 = new System.Windows.Forms.Label();
             this.guna2Panel4 = new Guna.UI2.WinForms.Guna2Panel();
             this.darkSpectCh = new Guna.UI2.WinForms.Guna2CheckBox();
@@ -84,7 +85,6 @@
             this.manualSaveDataToolStripMenuItem = new Guna.UI2.WinForms.Guna2Button();
             this.loadSpectralDataMenuItem = new Guna.UI2.WinForms.Guna2Button();
             this.label7 = new System.Windows.Forms.Label();
-            this.closeSpectrometerBtn = new Guna.UI2.WinForms.Guna2Button();
             this.guna2Panel1.SuspendLayout();
             this.parameterPanel.SuspendLayout();
             this.guna2Panel6.SuspendLayout();
@@ -398,7 +398,7 @@
             this.ScanIntervalInput.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
             this.ScanIntervalInput.BorderRadius = 6;
             this.ScanIntervalInput.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.ScanIntervalInput.DefaultText = "";
+            this.ScanIntervalInput.DefaultText = "500";
             this.ScanIntervalInput.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
             this.ScanIntervalInput.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
             this.ScanIntervalInput.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
@@ -732,13 +732,36 @@
             this.guna2Panel5.Controls.Add(this.extTriggerMenuItem);
             this.guna2Panel5.Controls.Add(this.label12);
             this.guna2Panel5.Controls.Add(this.onSpectrometer);
-            this.guna2Panel5.Controls.Add(this.guna2Button5);
+            this.guna2Panel5.Controls.Add(this.infoSpectrometerBtn);
             this.guna2Panel5.Controls.Add(this.label11);
             this.guna2Panel5.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
             this.guna2Panel5.Location = new System.Drawing.Point(510, 27);
             this.guna2Panel5.Name = "guna2Panel5";
             this.guna2Panel5.Size = new System.Drawing.Size(316, 248);
             this.guna2Panel5.TabIndex = 28;
+            // 
+            // closeSpectrometerBtn
+            // 
+            this.closeSpectrometerBtn.BackColor = System.Drawing.Color.Transparent;
+            this.closeSpectrometerBtn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.closeSpectrometerBtn.BorderRadius = 10;
+            this.closeSpectrometerBtn.BorderThickness = 1;
+            this.closeSpectrometerBtn.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.closeSpectrometerBtn.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.closeSpectrometerBtn.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
+            this.closeSpectrometerBtn.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.closeSpectrometerBtn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
+            this.closeSpectrometerBtn.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.closeSpectrometerBtn.ForeColor = System.Drawing.Color.Gainsboro;
+            this.closeSpectrometerBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.closeSpectrometerBtn.Location = new System.Drawing.Point(32, 131);
+            this.closeSpectrometerBtn.Name = "closeSpectrometerBtn";
+            this.closeSpectrometerBtn.Size = new System.Drawing.Size(272, 37);
+            this.closeSpectrometerBtn.TabIndex = 36;
+            this.closeSpectrometerBtn.Text = "Отключить спектрометр";
+            this.closeSpectrometerBtn.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.closeSpectrometerBtn.UseTransparentBackground = true;
+            this.closeSpectrometerBtn.Click += new System.EventHandler(this.closeSpectrometerBtn_Click);
             // 
             // quantityLines
             // 
@@ -754,7 +777,9 @@
             this.quantityLines.ItemHeight = 30;
             this.quantityLines.Items.AddRange(new object[] {
             "1",
+            "2",
             "3",
+            "4",
             "5"});
             this.quantityLines.Location = new System.Drawing.Point(199, 185);
             this.quantityLines.Name = "quantityLines";
@@ -854,27 +879,28 @@
             this.onSpectrometer.UseTransparentBackground = true;
             this.onSpectrometer.Click += new System.EventHandler(this.onSpectrometer_Click);
             // 
-            // guna2Button5
+            // infoSpectrometerBtn
             // 
-            this.guna2Button5.BackColor = System.Drawing.Color.Transparent;
-            this.guna2Button5.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.guna2Button5.BorderRadius = 10;
-            this.guna2Button5.BorderThickness = 1;
-            this.guna2Button5.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.guna2Button5.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.guna2Button5.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
-            this.guna2Button5.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.guna2Button5.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
-            this.guna2Button5.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.guna2Button5.ForeColor = System.Drawing.Color.Gainsboro;
-            this.guna2Button5.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.guna2Button5.Location = new System.Drawing.Point(32, 45);
-            this.guna2Button5.Name = "guna2Button5";
-            this.guna2Button5.Size = new System.Drawing.Size(272, 37);
-            this.guna2Button5.TabIndex = 27;
-            this.guna2Button5.Text = "Информация об устройстве";
-            this.guna2Button5.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.guna2Button5.UseTransparentBackground = true;
+            this.infoSpectrometerBtn.BackColor = System.Drawing.Color.Transparent;
+            this.infoSpectrometerBtn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.infoSpectrometerBtn.BorderRadius = 10;
+            this.infoSpectrometerBtn.BorderThickness = 1;
+            this.infoSpectrometerBtn.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.infoSpectrometerBtn.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.infoSpectrometerBtn.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
+            this.infoSpectrometerBtn.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.infoSpectrometerBtn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
+            this.infoSpectrometerBtn.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.infoSpectrometerBtn.ForeColor = System.Drawing.Color.Gainsboro;
+            this.infoSpectrometerBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.infoSpectrometerBtn.Location = new System.Drawing.Point(32, 45);
+            this.infoSpectrometerBtn.Name = "infoSpectrometerBtn";
+            this.infoSpectrometerBtn.Size = new System.Drawing.Size(272, 37);
+            this.infoSpectrometerBtn.TabIndex = 27;
+            this.infoSpectrometerBtn.Text = "Информация об устройстве";
+            this.infoSpectrometerBtn.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.infoSpectrometerBtn.UseTransparentBackground = true;
+            this.infoSpectrometerBtn.Click += new System.EventHandler(this.infoSpectrometerBtn_Click);
             // 
             // label11
             // 
@@ -1099,29 +1125,6 @@
             this.label7.TabIndex = 23;
             this.label7.Text = "Файлы";
             // 
-            // closeSpectrometerBtn
-            // 
-            this.closeSpectrometerBtn.BackColor = System.Drawing.Color.Transparent;
-            this.closeSpectrometerBtn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.closeSpectrometerBtn.BorderRadius = 10;
-            this.closeSpectrometerBtn.BorderThickness = 1;
-            this.closeSpectrometerBtn.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.closeSpectrometerBtn.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.closeSpectrometerBtn.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
-            this.closeSpectrometerBtn.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.closeSpectrometerBtn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
-            this.closeSpectrometerBtn.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.closeSpectrometerBtn.ForeColor = System.Drawing.Color.Gainsboro;
-            this.closeSpectrometerBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.closeSpectrometerBtn.Location = new System.Drawing.Point(32, 131);
-            this.closeSpectrometerBtn.Name = "closeSpectrometerBtn";
-            this.closeSpectrometerBtn.Size = new System.Drawing.Size(272, 37);
-            this.closeSpectrometerBtn.TabIndex = 36;
-            this.closeSpectrometerBtn.Text = "Отключить спектрометр";
-            this.closeSpectrometerBtn.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.closeSpectrometerBtn.UseTransparentBackground = true;
-            this.closeSpectrometerBtn.Click += new System.EventHandler(this.closeSpectrometerBtn_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1196,7 +1199,7 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private Guna.UI2.WinForms.Guna2Button onSpectrometer;
-        private Guna.UI2.WinForms.Guna2Button guna2Button5;
+        private Guna.UI2.WinForms.Guna2Button infoSpectrometerBtn;
         private System.Windows.Forms.Label label13;
         private Guna.UI2.WinForms.Guna2CheckBox extTriggerMenuItem;
         private System.Windows.Forms.Label temperatureLabel;

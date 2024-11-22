@@ -176,7 +176,7 @@ namespace WindowsFormsApp1
         public void updatePlot(float[,] data,bool lineSeriesflag = false, bool XwaveLength = true,int qtLines = 1)
         {
             
-            if (data[0,1] != 0 && !lineSeriesflag) 
+            if (data[0, 1] != 0 && !lineSeriesflag) // 
             {
                 
                 if (countLines >= qtLines)

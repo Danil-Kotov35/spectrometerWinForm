@@ -52,8 +52,8 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             ApplyDarkTitleBar();
-            
 
+            
 
         }
 
@@ -81,6 +81,7 @@ namespace WindowsFormsApp1
                 ContinScanBtn.Enabled = false;
                 stopScanBtn.Enabled = false;
                 closeSpectrometerBtn.Enabled = false;
+                infoSpectrometerBtn.Enabled=false;
                 notificationsLabel.Text = "Не удалось подключиться к спектрометру.";
                 MessageBox.Show("Спектрометр не подключен!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -109,13 +110,16 @@ namespace WindowsFormsApp1
         async private void ContinScanBtn_Click(object sender, EventArgs e)
         {
             ContinuousScanningFlag = true;
-            
+            int intervalScan = int.Parse(ScanIntervalInput.Text);
             while (ContinuousScanningFlag == true)
             {
+                ContinScanBtn.Checked = true;
                 await spectrometerScanning();
-            }         
+                await Task.Delay(intervalScan);
+                
+            }
+            ContinScanBtn.Checked = false;
             
-            parameterPanel.Visible = false;
 
         }
 
@@ -145,6 +149,7 @@ namespace WindowsFormsApp1
                 isOpen = true;
                 onSpectrometer.Enabled = false;
                 closeSpectrometerBtn.Enabled = true;
+                infoSpectrometerBtn.Enabled = true;
             }
         }
 
@@ -425,7 +430,15 @@ namespace WindowsFormsApp1
                         else
                         {
                             notificationsLabel.Text = spectrometer.loadData(timeMicros);//загружаем данные в спектрометр
-                            spectrometer.readyData(notificationsLabel);
+                            //spectrometer.readyData(notificationsLabel);
+                            while(wrapper.getSpectrumDataReadyFlag()!=1)
+                            {
+                                wrapper.getSpectrumDataReadyFlag();
+                            }
+                            if (wrapper.getSpectrumDataReadyFlag() == 1)
+                            {
+                                notificationsLabel.Text = $"данные спектрометра готовы";
+                            }
 
                         }
 
@@ -482,7 +495,7 @@ namespace WindowsFormsApp1
                 }
 
                 tempData = null;
-                parameterPanel.Visible = false;
+                
                 
             });
         }
@@ -498,11 +511,20 @@ namespace WindowsFormsApp1
                 oneScanBtn.Enabled = false;
                 ContinScanBtn.Enabled = false;
                 stopScanBtn.Enabled = false;
+                infoSpectrometerBtn.Enabled = false;
             }
             else
             {
                 notificationsLabel.Text = "Соединение со спектрометром не было закрыто!";
             }
+        }
+
+       
+
+        private void infoSpectrometerBtn_Click(object sender, EventArgs e)
+        {
+            aboutSprctrometer form2 = new aboutSprctrometer();
+            form2.Show();
         }
     }
 }
