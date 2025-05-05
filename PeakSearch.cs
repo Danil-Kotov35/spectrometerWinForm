@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing.Drawing2D;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿
+
+using System;
 
 namespace WindowsFormsApp1
 {
@@ -18,21 +14,22 @@ namespace WindowsFormsApp1
         }
         public float[,] findPeaks(int thresHold, int quantityPeak)
         {
-            float[,] peaksData = new float[510, 2]; // массив куда будем помещать пиковые значения
+            float[,] peaksData = new float[512, 2]; // массив куда будем помещать пиковые значения
             float[,] rezultData = new float[quantityPeak, 2];
             int peakCount = 0; // счетчик пиковых значений
 
-            for (int i = 0; i < data.GetLength(0); i += 5) // 5 - это отрезки на которые делится ось х чтобы пиковые значения были не слишком близко
+            for (int i = 0; i < data.GetLength(0); i += 5) // делим ось X на отрезки
             {
                 float peakX = float.NaN; // пиковое значение по оси X
-                float peakY = float.NaN; // пиковое значение по оси У
+                float peakY = float.NaN; // пиковое значение по оси Y
+                float peakValue = float.MinValue; // максимальное значение
 
-                float maxPeakValue = float.MinValue;// стартовое максимальное значение(по дефолту стоит наименьшее возможное значение)
-                for (int j = i; j < i + 5 && j < data.GetLength(0); j++) //если текущее значение больше максимального и больше порога записываем значения в переменные
+                for (int j = i; j < i + 5 && j < data.GetLength(0); j++)
                 {
-                    if (data[j, 1] > maxPeakValue && data[j, 1] >= thresHold)
+                    // Если значение больше текущего максимума и больше порога
+                    if (data[j, 1] > peakValue && data[j, 1] >= thresHold)
                     {
-                        maxPeakValue = data[j, 1];
+                        peakValue = data[j, 1];
                         peakX = data[j, 0];
                         peakY = data[j, 1];
                     }
@@ -46,14 +43,13 @@ namespace WindowsFormsApp1
                 }
             }
 
-            // Пузырьковая сортировка по второму столбцу (по убыванию)
-            for (int i = 0; i < peaksData.GetLength(0) - 1; i++)
+            // Пузырьковая сортировка по убыванию значений (второй столбец)
+            for (int i = 0; i < peakCount - 1; i++)
             {
-                for (int j = 0; j < peaksData.GetLength(0) - i - 1; j++)
+                for (int j = 0; j < peakCount - i - 1; j++)
                 {
                     if (peaksData[j, 1] < peaksData[j + 1, 1])
                     {
-                        // Меняем местами строки
                         for (int k = 0; k < peaksData.GetLength(1); k++)
                         {
                             float temp = peaksData[j, k];
@@ -64,12 +60,12 @@ namespace WindowsFormsApp1
                 }
             }
 
-            for (int i = 0; i < quantityPeak; i++)
+            // Формируем результат
+            for (int i = 0; i < quantityPeak && i < peakCount; i++)
             {
-                rezultData[i,0] = peaksData[i,0];
-                rezultData[i,1] = peaksData[i,1];
+                rezultData[i, 0] = peaksData[i, 0];
+                rezultData[i, 1] = peaksData[i, 1];
             }
-
 
             return rezultData;
         }

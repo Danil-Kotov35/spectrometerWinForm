@@ -1,30 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Globalization;
 using HP2000_wrapper;
+using System.Drawing;
 namespace WindowsFormsApp1
 {
     internal class LoadAndSaveReadyData
     {
-        dynamic wrapper = new HP2000Wrapper();
+        HP2000Wrapper wrapper = new HP2000Wrapper();
         // загрузка сторонних файлов
-        public string LoadReadyData() 
+        public string loadReadyData() 
         {
             using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                openFileDialog.InitialDirectory = Path.Combine(Application.StartupPath, "data"); // начальная папка имее относительный путь и начинается в директории с исполняемым файлом
+                openFileDialog.InitialDirectory = Properties.Settings.Default.LastUsedPath; // начальная папка имее относительный путь и начинается в директории с исполняемым файлом
                 openFileDialog.Filter = "Text files (*.txt)|*.txt"; // фильтр файлов
                 openFileDialog.FilterIndex = 1;
-                openFileDialog.RestoreDirectory = true;
+                openFileDialog.RestoreDirectory = false;
 
                 // Открываем диалоговое окно и проверяем, выбрал ли пользователь файл
                 if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
+                    Properties.Settings.Default.LastUsedPath = Path.GetDirectoryName(openFileDialog.FileName); // Сохраняем путь
+                    Properties.Settings.Default.Save(); // Сохраняем изменения в настройках, при следующем запуске путь у пользователя сохранится
                     string filePath = openFileDialog.FileName;                   
                     return filePath;
                 }
@@ -33,53 +32,81 @@ namespace WindowsFormsApp1
         }
 
         // ручное сохранение спектральных данных в файл
-        public void SaveReadyData(float[,] data)
+        public void saveData(float[,] data)
         {
             using (SaveFileDialog saveFileDialog = new SaveFileDialog())
             {
                 saveFileDialog.Filter = "Text files (*.txt)|*.txt"; // Фильтр файлов
                 saveFileDialog.Title = "Сохранить файл как";
-                saveFileDialog.InitialDirectory = Application.StartupPath; // Устанавливает начальную папку
+                saveFileDialog.InitialDirectory = Properties.Settings.Default.LastUsedPath; // Устанавливает начальную папку
                 saveFileDialog.FileName = "data.txt"; // Имя файла по умолчанию
 
                 if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 {
                     string filePath = saveFileDialog.FileName;
+                    Properties.Settings.Default.LastUsedPath = Path.GetDirectoryName(saveFileDialog.FileName); // Сохраняем путь
+                    Properties.Settings.Default.Save(); // Сохраняем изменения в настройках
 
-
-                    if (data[0, 0] == 0.000)
+                    if(data != null)
                     {
-                        using (StreamWriter writer = new StreamWriter(filePath))
+                        if (data[0, 0] == 0.000)
                         {
-                            // Запись данных
-                            for (int i = 0; i < data.GetLength(0); i++)
+                            using (StreamWriter writer = new StreamWriter(filePath))
                             {
-                                writer.WriteLine($"{i.ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
+                                // Запись данных
+                                for (int i = 0; i < data.GetLength(0); i++)
+                                {
+                                    writer.WriteLine($"{i.ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            float[] wavelengthArray = wrapper.getWavelength();// массив с длинами волн(х) 
+                            using (StreamWriter writer = new StreamWriter(filePath))
+                            {
+                                // Запись данных
+                                for (int i = 0; i < 512; i++)
+                                {
+                                    writer.WriteLine($"{data[i, 0].ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
+                                }
                             }
                         }
                     }
                     else
                     {
-                        float[] wavelengthArray = wrapper.getWavelength();// массив с длинами волн(х) 
-                        using (StreamWriter writer = new StreamWriter(filePath))
-                        {
-                            // Запись данных
-                            for (int i = 0; wavelengthArray[i] <= 1679; i++)
-                            {
-                                writer.WriteLine($"{data[i, 0].ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
-                            }
-                        }    
+                        MessageBox.Show("Данных для сохранения нет!");
                     }
                 }
             }
         }
 
         // автоматическое сохранение
-        public void automaticSaveData(float[,] data)
-        {      
-            DateTime currentDate = DateTime.Now;// используем дату для формирования имени файла и исключения повторений
-            string formattedDate = currentDate.ToString("dd_MM_yyyy_HH_mm_ss");
-            string filePath = Path.Combine(Application.StartupPath, "data", "automatic saving") + "\\data" + formattedDate + ".txt";// имя и путь файла   
+        public void automaticSaveData(float[,] data,bool reportModeChecked,bool stChecked, int channel, string savePath)
+        {
+            string filePath;
+
+            if (reportModeChecked)
+            {
+                filePath = savePath + $"\\{(stChecked ? "ASt" : "St")}_ch{channel + 1}.txt";
+
+            }
+            else
+            {
+                DateTime currentDate = DateTime.Now;// используем дату для формирования имени файла и исключения повторений
+                string formattedDate = currentDate.ToString("dd_MM_yyyy_HH_mm_ss");
+                filePath = Path.Combine(Application.StartupPath, "data", "automatic saving") + "\\data" + formattedDate + ".txt";// имя и путь файла   
+            }
+
+
+            //using (StreamWriter writer = new StreamWriter(filePath))
+            //{
+            //    // Запись данных
+            //    for (int i = 0; i < 10; i++)
+            //    {
+            //        writer.WriteLine($"test");
+            //    }
+            //}
 
             if (data[0, 0] == 0.000)
             {
@@ -98,12 +125,43 @@ namespace WindowsFormsApp1
                 using (StreamWriter writer = new StreamWriter(filePath))
                 {
                     // Запись данных
-                    for (int i = 0; data[i, 0] <= 1676; i++)
+                    for (int i = 0; i < 512; i++)
                     {
                         writer.WriteLine($"{data[i, 0].ToString("F3", CultureInfo.InvariantCulture)}\t{data[i, 1].ToString("F2", CultureInfo.InvariantCulture)}");
                     }
                 }
             }
         }
+
+        public string browsePath()
+        {
+            
+            using (FolderBrowserDialog dialog = new FolderBrowserDialog())
+            {
+                string lastPath = Properties.Settings.Default.LastFolderPath;
+                if (!string.IsNullOrEmpty(lastPath))
+                {
+                    dialog.SelectedPath = lastPath;   
+                }
+                dialog.Description = "Выберите папку";
+                dialog.ShowNewFolderButton = true;
+
+                if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    string selectedPath = dialog.SelectedPath;
+                    Properties.Settings.Default.LastFolderPath = selectedPath;
+                    Properties.Settings.Default.Save();
+                    return selectedPath;
+                } else
+                {
+                    return null;
+                }
+                
+            }
+             
+        }
+
+        
+
     }
 }

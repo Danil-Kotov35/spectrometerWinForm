@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using HP2000_wrapper;
+﻿using HP2000_wrapper;
 using System.Windows.Forms;
-using System.Threading;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using System.Globalization;
-using System.IO;
-using System.Drawing;
 
 
 namespace WindowsFormsApp1
@@ -19,12 +9,9 @@ namespace WindowsFormsApp1
     {
         dynamic wrapper = new HP2000Wrapper();
 
-        // загрузка данных в спектрометр. на вход идут время сканирования и количество усреднений 
-        public string loadData(int timeMicros, int average = 1)
+        // загрузка данных в спектрометр. на вход идёт время сканирования 
+        public string loadData(int timeMicros)
         {
-
-            wrapper.setAverage(average);//устанавливаем количество усреднений
-
 
             bool flag = wrapper.getSpectrum(timeMicros);// начинаем сбор спектральных данных
 
@@ -45,23 +32,16 @@ namespace WindowsFormsApp1
             // в цикле проверяем готовность данных
             while (dataReadyFlag != 1)
             {
-                dataReadyFlag = wrapper.getSpectrumDataReadyFlag();//метод который проверяет готовность 
-                notificationsLabel.Text = "Начат сбор спектра.";
-                
+                dataReadyFlag = wrapper.getSpectrumDataReadyFlag();//метод который проверяет готовность    
             }
-            if (dataReadyFlag == 1)
-            {
-                notificationsLabel.Text = "данные спектрометра готовы!";
+            
+            notificationsLabel.Text = "Данные спектрометра готовы!";
 
-            }
-            else
-            {
-                notificationsLabel.Text = "Что-то пошло не так";
-            }
+            
         }
 
         //метод который сохраняет полученные данные в массив из которого будет происходить чтение и отрисовка на графике
-        public float[,] saveData(int filter = 0, bool darkSpectraCor = false, bool nonLinearCor = false, bool waverformCor = false, bool XwaveLength = true)
+        public float[,] processingData(int filter = 0, bool darkSpectraCor = false, bool nonLinearCor = false, bool waverformCor = false, bool XwaveLength = true)
         {
 
             Spectrum data;
@@ -74,30 +54,35 @@ namespace WindowsFormsApp1
                 if (XwaveLength == true)// условие проверяет ось какого вида мы используем в данный момент
                 {
                     float[] wavelengthArray = wrapper.getWavelength();// массив с длинами волн(х) 
+                    
+                    // Запись данных
+                    for (int i = 0; i < 512; i++) 
                     {
-                        // Запись данных
-                        for (int i = 0; wavelengthArray[i] <= 1679; i++) // !!!жесткая привязка к длине волны надо исправить!!!
-                        {
-                            rezultData[i, 0] = wavelengthArray[i];
-                            rezultData[i, 1] = filterData[i];
-                        }
+                        rezultData[i, 0] = wavelengthArray[i];
+                        rezultData[i, 1] = filterData[i];
                     }
+                    
                 }
                 else
                 {
-                    {
-                        // Запись данных
-                        for (int i = 0; i < rezultData.GetLength(0); i++)
-                        {
-                            rezultData[i, 0] = i;
-                            rezultData[i, 1] = filterData[i];
+                    
+                     // Запись данных
+                     for (int i = 0; i < 512; i++)
+                     {
+                         rezultData[i, 0] = i;
+                         rezultData[i, 1] = filterData[i];
 
-                        }
-                    }
+                     }
+                    
                 }
+                data.array = null;
+                return rezultData;
             }
-            data.array = null;
-            return rezultData;
+            else
+            {
+                return null;
+            }
+            
         }   
     }
 }

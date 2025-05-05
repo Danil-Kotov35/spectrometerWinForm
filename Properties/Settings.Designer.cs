@@ -22,5 +22,161 @@ namespace WindowsFormsApp1.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments)")]
+        public string LastUsedPath {
+            get {
+                return ((string)(this["LastUsedPath"]));
+            }
+            set {
+                this["LastUsedPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public string timeMicrosInput {
+            get {
+                return ((string)(this["timeMicrosInput"]));
+            }
+            set {
+                this["timeMicrosInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("500")]
+        public string ScanIntervalInput {
+            get {
+                return ((string)(this["ScanIntervalInput"]));
+            }
+            set {
+                this["ScanIntervalInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public string averageInput {
+            get {
+                return ((string)(this["averageInput"]));
+            }
+            set {
+                this["averageInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1000")]
+        public string thresholdInput {
+            get {
+                return ((string)(this["thresholdInput"]));
+            }
+            set {
+                this["thresholdInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public string quantityPeakInput {
+            get {
+                return ((string)(this["quantityPeakInput"]));
+            }
+            set {
+                this["quantityPeakInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int quantityLoadGraph {
+            get {
+                return ((int)(this["quantityLoadGraph"]));
+            }
+            set {
+                this["quantityLoadGraph"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int quantityLines {
+            get {
+                return ((int)(this["quantityLines"]));
+            }
+            set {
+                this["quantityLines"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int filterInput {
+            get {
+                return ((int)(this["filterInput"]));
+            }
+            set {
+                this["filterInput"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int chanelComboBox1 {
+            get {
+                return ((int)(this["chanelComboBox1"]));
+            }
+            set {
+                this["chanelComboBox1"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool StAStSwitch {
+            get {
+                return ((bool)(this["StAStSwitch"]));
+            }
+            set {
+                this["StAStSwitch"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastFolderPath {
+            get {
+                return ((string)(this["LastFolderPath"]));
+            }
+            set {
+                this["LastFolderPath"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool reportModeCheckBox {
+            get {
+                return ((bool)(this["reportModeCheckBox"]));
+            }
+            set {
+                this["reportModeCheckBox"] = value;
+            }
+        }
     }
 }

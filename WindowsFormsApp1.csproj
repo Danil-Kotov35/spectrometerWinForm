@@ -7,7 +7,7 @@
     <ProjectGuid>{2DD00A5E-D404-41E3-88E6-E71D14DF7609}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>WindowsFormsApp1</RootNamespace>
-    <AssemblyName>SpectrometerApp</AssemblyName>
+    <AssemblyName>SpectraVision</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -94,6 +94,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GetData.cs" />
+    <Compile Include="Helper.cs" />
     <Compile Include="LoadAndSaveReadyData.cs" />
     <Compile Include="OxyPlotSchedule.cs" />
     <Compile Include="PeakSearch.cs" />

@@ -26,8 +26,13 @@ namespace WindowsFormsApp1
             float[] wavelength = wrapper.getWavelength();
             int wavelengthMin = (int)wavelength[0];
             int wavelengthMax = (int)wavelength[511];
-            SerialNumberLabel.Text = "Cерийный номер: "+ serialNum;
-            waveLengthLabel.Text = $"Длины волн: {wavelengthMin} - {wavelengthMax}н/м";
+            SerialNumberLabel.Text = "Cерийный номер: " + serialNum;
+            waveLengthLabel.Text = $"Диапазон длин волн: {wavelengthMin} - {wavelengthMax} н/м";
+
+        }
+
+        private void guna2Panel3_Paint(object sender, PaintEventArgs e)
+        {
 
         }
     }

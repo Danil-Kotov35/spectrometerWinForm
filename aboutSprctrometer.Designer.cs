@@ -30,9 +30,9 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(aboutSprctrometer));
             this.guna2Panel3 = new Guna.UI2.WinForms.Guna2Panel();
-            this.SerialNumberLabel = new System.Windows.Forms.Label();
-            this.waveLengthLabel = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.waveLengthLabel = new System.Windows.Forms.Label();
+            this.SerialNumberLabel = new System.Windows.Forms.Label();
             this.guna2Panel3.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -49,17 +49,18 @@
             this.guna2Panel3.Name = "guna2Panel3";
             this.guna2Panel3.Size = new System.Drawing.Size(357, 218);
             this.guna2Panel3.TabIndex = 1;
+            this.guna2Panel3.Paint += new System.Windows.Forms.PaintEventHandler(this.guna2Panel3_Paint);
             // 
-            // SerialNumberLabel
+            // label1
             // 
-            this.SerialNumberLabel.AutoSize = true;
-            this.SerialNumberLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.SerialNumberLabel.ForeColor = System.Drawing.Color.Gainsboro;
-            this.SerialNumberLabel.Location = new System.Drawing.Point(26, 49);
-            this.SerialNumberLabel.Name = "SerialNumberLabel";
-            this.SerialNumberLabel.Size = new System.Drawing.Size(130, 18);
-            this.SerialNumberLabel.TabIndex = 0;
-            this.SerialNumberLabel.Text = "Серийный номер:";
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.label1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.label1.Location = new System.Drawing.Point(26, 22);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(234, 18);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "Модель спектрометра: ATP8000";
             // 
             // waveLengthLabel
             // 
@@ -72,16 +73,16 @@
             this.waveLengthLabel.TabIndex = 1;
             this.waveLengthLabel.Text = "Длины волн:";
             // 
-            // label1
+            // SerialNumberLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
-            this.label1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.label1.Location = new System.Drawing.Point(26, 22);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(234, 18);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "Модель спектрометра: ATP8000";
+            this.SerialNumberLabel.AutoSize = true;
+            this.SerialNumberLabel.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F);
+            this.SerialNumberLabel.ForeColor = System.Drawing.Color.Gainsboro;
+            this.SerialNumberLabel.Location = new System.Drawing.Point(26, 49);
+            this.SerialNumberLabel.Name = "SerialNumberLabel";
+            this.SerialNumberLabel.Size = new System.Drawing.Size(130, 18);
+            this.SerialNumberLabel.TabIndex = 0;
+            this.SerialNumberLabel.Text = "Серийный номер:";
             // 
             // aboutSprctrometer
             // 

@@ -37,9 +37,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.label8 = new System.Windows.Forms.Label();
-            this.StatusPanel = new System.Windows.Forms.Panel();
             this.oneScanBtn = new Guna.UI2.WinForms.Guna2Button();
             this.guna2Panel1 = new Guna.UI2.WinForms.Guna2Panel();
+            this.filterInput = new System.Windows.Forms.ComboBox();
             this.findPeakBtn = new Guna.UI2.WinForms.Guna2Button();
             this.progressBar1 = new Guna.UI2.WinForms.Guna2ProgressBar();
             this.parametersBtn = new Guna.UI2.WinForms.Guna2Button();
@@ -48,7 +48,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.averageInput = new Guna.UI2.WinForms.Guna2TextBox();
             this.ScanIntervalInput = new Guna.UI2.WinForms.Guna2TextBox();
-            this.filterInput = new Guna.UI2.WinForms.Guna2TextBox();
             this.timeMicrosInput = new Guna.UI2.WinForms.Guna2TextBox();
             this.stopScanBtn = new Guna.UI2.WinForms.Guna2Button();
             this.ContinScanBtn = new Guna.UI2.WinForms.Guna2Button();
@@ -80,11 +79,26 @@
             this.nonlinearCorCh = new Guna.UI2.WinForms.Guna2CheckBox();
             this.label10 = new System.Windows.Forms.Label();
             this.guna2Panel3 = new Guna.UI2.WinForms.Guna2Panel();
+            this.reportModeCheckBox = new Guna.UI2.WinForms.Guna2CheckBox();
+            this.quantityLoadGraph = new Guna.UI2.WinForms.Guna2ComboBox();
+            this.referenceChartLoadBtn = new Guna.UI2.WinForms.Guna2Button();
+            this.label16 = new System.Windows.Forms.Label();
             this.automaticSaveToolStripMenuItem = new Guna.UI2.WinForms.Guna2CheckBox();
             this.saveToPNGMenuItem = new Guna.UI2.WinForms.Guna2Button();
-            this.manualSaveDataToolStripMenuItem = new Guna.UI2.WinForms.Guna2Button();
-            this.loadSpectralDataMenuItem = new Guna.UI2.WinForms.Guna2Button();
             this.label7 = new System.Windows.Forms.Label();
+            this.fixedSizeBtn = new Guna.UI2.WinForms.Guna2Button();
+            this.referenceChartBtn = new Guna.UI2.WinForms.Guna2Button();
+            this.loadBtn = new Guna.UI2.WinForms.Guna2Button();
+            this.saveBtn = new Guna.UI2.WinForms.Guna2Button();
+            this.StAStSwitch = new Guna.UI2.WinForms.Guna2ToggleSwitch();
+            this.label17 = new System.Windows.Forms.Label();
+            this.label18 = new System.Windows.Forms.Label();
+            this.chanelComboBox1 = new Guna.UI2.WinForms.Guna2ComboBox();
+            this.label19 = new System.Windows.Forms.Label();
+            this.SavePathTextBox = new Guna.UI2.WinForms.Guna2TextBox();
+            this.label20 = new System.Windows.Forms.Label();
+            this.BrowseButton = new Guna.UI2.WinForms.Guna2Button();
+            this.reportButton = new Guna.UI2.WinForms.Guna2Button();
             this.guna2Panel1.SuspendLayout();
             this.parameterPanel.SuspendLayout();
             this.guna2Panel6.SuspendLayout();
@@ -114,9 +128,9 @@
             this.label6.ForeColor = System.Drawing.SystemColors.Control;
             this.label6.Location = new System.Drawing.Point(27, 288);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(67, 13);
+            this.label6.Size = new System.Drawing.Size(150, 13);
             this.label6.TabIndex = 7;
-            this.label6.Text = "Усред.Скан";
+            this.label6.Text = "Усредненное сканирование";
             // 
             // label5
             // 
@@ -125,9 +139,9 @@
             this.label5.ForeColor = System.Drawing.SystemColors.Control;
             this.label5.Location = new System.Drawing.Point(26, 256);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(68, 13);
+            this.label5.Size = new System.Drawing.Size(154, 13);
             this.label5.TabIndex = 5;
-            this.label5.Text = "Ин.Скан/мс";
+            this.label5.Text = "Интервал сканирований (мс)";
             // 
             // label4
             // 
@@ -147,9 +161,9 @@
             this.label3.ForeColor = System.Drawing.SystemColors.Control;
             this.label3.Location = new System.Drawing.Point(26, 202);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(66, 13);
+            this.label3.Size = new System.Drawing.Size(138, 13);
             this.label3.TabIndex = 1;
-            this.label3.Text = "Вр.скан/мс";
+            this.label3.Text = "Время сканирования (мс)";
             // 
             // label1
             // 
@@ -185,14 +199,6 @@
             this.label8.TabIndex = 7;
             this.label8.Text = "Порог";
             // 
-            // StatusPanel
-            // 
-            this.StatusPanel.BackColor = System.Drawing.Color.Red;
-            this.StatusPanel.Location = new System.Drawing.Point(242, 507);
-            this.StatusPanel.Name = "StatusPanel";
-            this.StatusPanel.Size = new System.Drawing.Size(13, 13);
-            this.StatusPanel.TabIndex = 8;
-            // 
             // oneScanBtn
             // 
             this.oneScanBtn.BackColor = System.Drawing.Color.Transparent;
@@ -220,6 +226,8 @@
             // 
             this.guna2Panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
+            this.guna2Panel1.BackColor = System.Drawing.SystemColors.Window;
+            this.guna2Panel1.Controls.Add(this.filterInput);
             this.guna2Panel1.Controls.Add(this.findPeakBtn);
             this.guna2Panel1.Controls.Add(this.progressBar1);
             this.guna2Panel1.Controls.Add(this.parametersBtn);
@@ -228,9 +236,7 @@
             this.guna2Panel1.Controls.Add(this.label2);
             this.guna2Panel1.Controls.Add(this.label9);
             this.guna2Panel1.Controls.Add(this.averageInput);
-            this.guna2Panel1.Controls.Add(this.StatusPanel);
             this.guna2Panel1.Controls.Add(this.ScanIntervalInput);
-            this.guna2Panel1.Controls.Add(this.filterInput);
             this.guna2Panel1.Controls.Add(this.label8);
             this.guna2Panel1.Controls.Add(this.timeMicrosInput);
             this.guna2Panel1.Controls.Add(this.label5);
@@ -248,6 +254,23 @@
             this.guna2Panel1.Name = "guna2Panel1";
             this.guna2Panel1.Size = new System.Drawing.Size(268, 556);
             this.guna2Panel1.TabIndex = 9;
+            // 
+            // filterInput
+            // 
+            this.filterInput.BackColor = System.Drawing.SystemColors.Window;
+            this.filterInput.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.filterInput.FormattingEnabled = true;
+            this.filterInput.Items.AddRange(new object[] {
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"});
+            this.filterInput.Location = new System.Drawing.Point(189, 229);
+            this.filterInput.Name = "filterInput";
+            this.filterInput.Size = new System.Drawing.Size(49, 21);
+            this.filterInput.TabIndex = 23;
             // 
             // findPeakBtn
             // 
@@ -303,7 +326,7 @@
             this.parametersBtn.Name = "parametersBtn";
             this.parametersBtn.Size = new System.Drawing.Size(243, 42);
             this.parametersBtn.TabIndex = 21;
-            this.parametersBtn.Text = "Параметры";
+            this.parametersBtn.Text = "Настройки";
             this.parametersBtn.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.parametersBtn.UseTransparentBackground = true;
             this.parametersBtn.Click += new System.EventHandler(this.parametersBtn_Click);
@@ -384,7 +407,7 @@
             this.averageInput.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.averageInput.ForeColor = System.Drawing.Color.White;
             this.averageInput.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.averageInput.Location = new System.Drawing.Point(107, 281);
+            this.averageInput.Location = new System.Drawing.Point(189, 281);
             this.averageInput.Name = "averageInput";
             this.averageInput.PasswordChar = '\0';
             this.averageInput.PlaceholderText = "";
@@ -408,37 +431,13 @@
             this.ScanIntervalInput.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.ScanIntervalInput.ForeColor = System.Drawing.Color.White;
             this.ScanIntervalInput.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.ScanIntervalInput.Location = new System.Drawing.Point(107, 252);
+            this.ScanIntervalInput.Location = new System.Drawing.Point(189, 256);
             this.ScanIntervalInput.Name = "ScanIntervalInput";
             this.ScanIntervalInput.PasswordChar = '\0';
             this.ScanIntervalInput.PlaceholderText = "";
             this.ScanIntervalInput.SelectedText = "";
             this.ScanIntervalInput.Size = new System.Drawing.Size(49, 20);
             this.ScanIntervalInput.TabIndex = 16;
-            // 
-            // filterInput
-            // 
-            this.filterInput.BackColor = System.Drawing.Color.Transparent;
-            this.filterInput.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.filterInput.BorderRadius = 6;
-            this.filterInput.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.filterInput.DefaultText = "0";
-            this.filterInput.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
-            this.filterInput.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
-            this.filterInput.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.filterInput.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.filterInput.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
-            this.filterInput.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.filterInput.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.filterInput.ForeColor = System.Drawing.Color.White;
-            this.filterInput.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.filterInput.Location = new System.Drawing.Point(107, 226);
-            this.filterInput.Name = "filterInput";
-            this.filterInput.PasswordChar = '\0';
-            this.filterInput.PlaceholderText = "";
-            this.filterInput.SelectedText = "";
-            this.filterInput.Size = new System.Drawing.Size(49, 20);
-            this.filterInput.TabIndex = 15;
             // 
             // timeMicrosInput
             // 
@@ -456,7 +455,7 @@
             this.timeMicrosInput.Font = new System.Drawing.Font("Segoe UI", 9F);
             this.timeMicrosInput.ForeColor = System.Drawing.Color.White;
             this.timeMicrosInput.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.timeMicrosInput.Location = new System.Drawing.Point(107, 200);
+            this.timeMicrosInput.Location = new System.Drawing.Point(189, 202);
             this.timeMicrosInput.Name = "timeMicrosInput";
             this.timeMicrosInput.PasswordChar = '\0';
             this.timeMicrosInput.PlaceholderText = "";
@@ -555,7 +554,7 @@
             this.pixelXToolStripMenuItem.FillColor = System.Drawing.Color.Transparent;
             this.pixelXToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.pixelXToolStripMenuItem.ForeColor = System.Drawing.Color.White;
-            this.pixelXToolStripMenuItem.Location = new System.Drawing.Point(409, 12);
+            this.pixelXToolStripMenuItem.Location = new System.Drawing.Point(394, 12);
             this.pixelXToolStripMenuItem.Name = "pixelXToolStripMenuItem";
             this.pixelXToolStripMenuItem.Size = new System.Drawing.Size(105, 30);
             this.pixelXToolStripMenuItem.TabIndex = 15;
@@ -577,7 +576,7 @@
             this.axesWaveLenBtn.FillColor = System.Drawing.Color.Transparent;
             this.axesWaveLenBtn.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.axesWaveLenBtn.ForeColor = System.Drawing.Color.White;
-            this.axesWaveLenBtn.Location = new System.Drawing.Point(289, 12);
+            this.axesWaveLenBtn.Location = new System.Drawing.Point(274, 12);
             this.axesWaveLenBtn.Name = "axesWaveLenBtn";
             this.axesWaveLenBtn.Size = new System.Drawing.Size(114, 30);
             this.axesWaveLenBtn.TabIndex = 16;
@@ -594,7 +593,7 @@
             this.parameterPanel.Controls.Add(this.guna2Panel5);
             this.parameterPanel.Controls.Add(this.guna2Panel4);
             this.parameterPanel.Controls.Add(this.guna2Panel3);
-            this.parameterPanel.Location = new System.Drawing.Point(266, 0);
+            this.parameterPanel.Location = new System.Drawing.Point(274, 3);
             this.parameterPanel.Name = "parameterPanel";
             this.parameterPanel.Size = new System.Drawing.Size(930, 558);
             this.parameterPanel.TabIndex = 17;
@@ -765,8 +764,9 @@
             // 
             // quantityLines
             // 
-            this.quantityLines.BackColor = System.Drawing.SystemColors.ButtonHighlight;
+            this.quantityLines.BackColor = System.Drawing.Color.Transparent;
             this.quantityLines.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.quantityLines.BorderRadius = 10;
             this.quantityLines.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
             this.quantityLines.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.quantityLines.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
@@ -781,7 +781,7 @@
             "3",
             "4",
             "5"});
-            this.quantityLines.Location = new System.Drawing.Point(199, 185);
+            this.quantityLines.Location = new System.Drawing.Point(247, 181);
             this.quantityLines.Name = "quantityLines";
             this.quantityLines.Size = new System.Drawing.Size(57, 36);
             this.quantityLines.TabIndex = 35;
@@ -850,7 +850,7 @@
             this.label12.BackColor = System.Drawing.Color.Transparent;
             this.label12.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.label12.ForeColor = System.Drawing.Color.Gainsboro;
-            this.label12.Location = new System.Drawing.Point(28, 195);
+            this.label12.Location = new System.Drawing.Point(28, 189);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(157, 20);
             this.label12.TabIndex = 29;
@@ -1012,16 +1012,99 @@
             this.guna2Panel3.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.guna2Panel3.BackColor = System.Drawing.Color.Transparent;
             this.guna2Panel3.BorderRadius = 25;
+            this.guna2Panel3.Controls.Add(this.reportModeCheckBox);
+            this.guna2Panel3.Controls.Add(this.quantityLoadGraph);
+            this.guna2Panel3.Controls.Add(this.referenceChartLoadBtn);
+            this.guna2Panel3.Controls.Add(this.label16);
             this.guna2Panel3.Controls.Add(this.automaticSaveToolStripMenuItem);
             this.guna2Panel3.Controls.Add(this.saveToPNGMenuItem);
-            this.guna2Panel3.Controls.Add(this.manualSaveDataToolStripMenuItem);
-            this.guna2Panel3.Controls.Add(this.loadSpectralDataMenuItem);
             this.guna2Panel3.Controls.Add(this.label7);
             this.guna2Panel3.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
             this.guna2Panel3.Location = new System.Drawing.Point(145, 27);
             this.guna2Panel3.Name = "guna2Panel3";
             this.guna2Panel3.Size = new System.Drawing.Size(316, 248);
             this.guna2Panel3.TabIndex = 0;
+            // 
+            // reportModeCheckBox
+            // 
+            this.reportModeCheckBox.AutoSize = true;
+            this.reportModeCheckBox.BackColor = System.Drawing.Color.Transparent;
+            this.reportModeCheckBox.CheckedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.reportModeCheckBox.CheckedState.BorderRadius = 0;
+            this.reportModeCheckBox.CheckedState.BorderThickness = 0;
+            this.reportModeCheckBox.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.reportModeCheckBox.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.reportModeCheckBox.ForeColor = System.Drawing.Color.Gainsboro;
+            this.reportModeCheckBox.Location = new System.Drawing.Point(32, 187);
+            this.reportModeCheckBox.Name = "reportModeCheckBox";
+            this.reportModeCheckBox.Size = new System.Drawing.Size(256, 24);
+            this.reportModeCheckBox.TabIndex = 39;
+            this.reportModeCheckBox.Text = "Режим формирования отчета";
+            this.reportModeCheckBox.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(137)))), ((int)(((byte)(149)))));
+            this.reportModeCheckBox.UncheckedState.BorderRadius = 0;
+            this.reportModeCheckBox.UncheckedState.BorderThickness = 0;
+            this.reportModeCheckBox.UncheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(125)))), ((int)(((byte)(137)))), ((int)(((byte)(149)))));
+            this.reportModeCheckBox.UseVisualStyleBackColor = false;
+            this.reportModeCheckBox.CheckedChanged += new System.EventHandler(this.reportModeCheckBox_CheckedChanged);
+            // 
+            // quantityLoadGraph
+            // 
+            this.quantityLoadGraph.BackColor = System.Drawing.Color.Transparent;
+            this.quantityLoadGraph.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.quantityLoadGraph.BorderRadius = 10;
+            this.quantityLoadGraph.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.quantityLoadGraph.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.quantityLoadGraph.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
+            this.quantityLoadGraph.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.quantityLoadGraph.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.quantityLoadGraph.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.quantityLoadGraph.ForeColor = System.Drawing.Color.Gainsboro;
+            this.quantityLoadGraph.ItemHeight = 30;
+            this.quantityLoadGraph.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4",
+            "5"});
+            this.quantityLoadGraph.Location = new System.Drawing.Point(247, 140);
+            this.quantityLoadGraph.Name = "quantityLoadGraph";
+            this.quantityLoadGraph.Size = new System.Drawing.Size(57, 36);
+            this.quantityLoadGraph.TabIndex = 38;
+            // 
+            // referenceChartLoadBtn
+            // 
+            this.referenceChartLoadBtn.BackColor = System.Drawing.Color.Transparent;
+            this.referenceChartLoadBtn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.referenceChartLoadBtn.BorderRadius = 10;
+            this.referenceChartLoadBtn.BorderThickness = 1;
+            this.referenceChartLoadBtn.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.referenceChartLoadBtn.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.referenceChartLoadBtn.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
+            this.referenceChartLoadBtn.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.referenceChartLoadBtn.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
+            this.referenceChartLoadBtn.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.referenceChartLoadBtn.ForeColor = System.Drawing.Color.Gainsboro;
+            this.referenceChartLoadBtn.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.referenceChartLoadBtn.Location = new System.Drawing.Point(32, 88);
+            this.referenceChartLoadBtn.Name = "referenceChartLoadBtn";
+            this.referenceChartLoadBtn.Size = new System.Drawing.Size(272, 37);
+            this.referenceChartLoadBtn.TabIndex = 28;
+            this.referenceChartLoadBtn.Text = "Загрузить эталонный график";
+            this.referenceChartLoadBtn.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.referenceChartLoadBtn.UseTransparentBackground = true;
+            this.referenceChartLoadBtn.Click += new System.EventHandler(this.referenceChartLoadBtn_Click);
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.BackColor = System.Drawing.Color.Transparent;
+            this.label16.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.label16.ForeColor = System.Drawing.Color.Gainsboro;
+            this.label16.Location = new System.Drawing.Point(28, 148);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(198, 20);
+            this.label16.TabIndex = 37;
+            this.label16.Text = "Количество загр. кривых";
             // 
             // automaticSaveToolStripMenuItem
             // 
@@ -1033,7 +1116,7 @@
             this.automaticSaveToolStripMenuItem.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.automaticSaveToolStripMenuItem.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
             this.automaticSaveToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
-            this.automaticSaveToolStripMenuItem.Location = new System.Drawing.Point(32, 177);
+            this.automaticSaveToolStripMenuItem.Location = new System.Drawing.Point(32, 217);
             this.automaticSaveToolStripMenuItem.Name = "automaticSaveToolStripMenuItem";
             this.automaticSaveToolStripMenuItem.Size = new System.Drawing.Size(251, 24);
             this.automaticSaveToolStripMenuItem.TabIndex = 27;
@@ -1058,7 +1141,7 @@
             this.saveToPNGMenuItem.Font = new System.Drawing.Font("Segoe UI", 12F);
             this.saveToPNGMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.saveToPNGMenuItem.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.saveToPNGMenuItem.Location = new System.Drawing.Point(32, 131);
+            this.saveToPNGMenuItem.Location = new System.Drawing.Point(32, 45);
             this.saveToPNGMenuItem.Name = "saveToPNGMenuItem";
             this.saveToPNGMenuItem.Size = new System.Drawing.Size(272, 37);
             this.saveToPNGMenuItem.TabIndex = 26;
@@ -1066,52 +1149,6 @@
             this.saveToPNGMenuItem.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
             this.saveToPNGMenuItem.UseTransparentBackground = true;
             this.saveToPNGMenuItem.Click += new System.EventHandler(this.saveToPNGMenuItem_Click);
-            // 
-            // manualSaveDataToolStripMenuItem
-            // 
-            this.manualSaveDataToolStripMenuItem.BackColor = System.Drawing.Color.Transparent;
-            this.manualSaveDataToolStripMenuItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.manualSaveDataToolStripMenuItem.BorderRadius = 10;
-            this.manualSaveDataToolStripMenuItem.BorderThickness = 1;
-            this.manualSaveDataToolStripMenuItem.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.manualSaveDataToolStripMenuItem.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.manualSaveDataToolStripMenuItem.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
-            this.manualSaveDataToolStripMenuItem.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.manualSaveDataToolStripMenuItem.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
-            this.manualSaveDataToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.manualSaveDataToolStripMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
-            this.manualSaveDataToolStripMenuItem.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.manualSaveDataToolStripMenuItem.Location = new System.Drawing.Point(32, 88);
-            this.manualSaveDataToolStripMenuItem.Name = "manualSaveDataToolStripMenuItem";
-            this.manualSaveDataToolStripMenuItem.Size = new System.Drawing.Size(272, 37);
-            this.manualSaveDataToolStripMenuItem.TabIndex = 24;
-            this.manualSaveDataToolStripMenuItem.Text = "Сохранить файл спектра";
-            this.manualSaveDataToolStripMenuItem.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.manualSaveDataToolStripMenuItem.UseTransparentBackground = true;
-            this.manualSaveDataToolStripMenuItem.Click += new System.EventHandler(this.manualSaveDataToolStripMenuItem_Click);
-            // 
-            // loadSpectralDataMenuItem
-            // 
-            this.loadSpectralDataMenuItem.BackColor = System.Drawing.Color.Transparent;
-            this.loadSpectralDataMenuItem.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.loadSpectralDataMenuItem.BorderRadius = 10;
-            this.loadSpectralDataMenuItem.BorderThickness = 1;
-            this.loadSpectralDataMenuItem.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
-            this.loadSpectralDataMenuItem.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
-            this.loadSpectralDataMenuItem.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(34)))), ((int)(((byte)(39)))));
-            this.loadSpectralDataMenuItem.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
-            this.loadSpectralDataMenuItem.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
-            this.loadSpectralDataMenuItem.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.loadSpectralDataMenuItem.ForeColor = System.Drawing.Color.Gainsboro;
-            this.loadSpectralDataMenuItem.HoverState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
-            this.loadSpectralDataMenuItem.Location = new System.Drawing.Point(32, 45);
-            this.loadSpectralDataMenuItem.Name = "loadSpectralDataMenuItem";
-            this.loadSpectralDataMenuItem.Size = new System.Drawing.Size(272, 37);
-            this.loadSpectralDataMenuItem.TabIndex = 23;
-            this.loadSpectralDataMenuItem.Text = "Прочитать файл спектра";
-            this.loadSpectralDataMenuItem.TextAlign = System.Windows.Forms.HorizontalAlignment.Left;
-            this.loadSpectralDataMenuItem.UseTransparentBackground = true;
-            this.loadSpectralDataMenuItem.Click += new System.EventHandler(this.loadSpectralDataMenuItem_Click);
             // 
             // label7
             // 
@@ -1125,6 +1162,251 @@
             this.label7.TabIndex = 23;
             this.label7.Text = "Файлы";
             // 
+            // fixedSizeBtn
+            // 
+            this.fixedSizeBtn.BackColor = System.Drawing.Color.Transparent;
+            this.fixedSizeBtn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.fixedSizeBtn.BorderRadius = 10;
+            this.fixedSizeBtn.BorderThickness = 1;
+            this.fixedSizeBtn.CheckedState.BorderColor = System.Drawing.Color.Transparent;
+            this.fixedSizeBtn.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.fixedSizeBtn.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.fixedSizeBtn.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.fixedSizeBtn.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.fixedSizeBtn.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.fixedSizeBtn.FillColor = System.Drawing.Color.Transparent;
+            this.fixedSizeBtn.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.fixedSizeBtn.ForeColor = System.Drawing.Color.White;
+            this.fixedSizeBtn.Location = new System.Drawing.Point(505, 12);
+            this.fixedSizeBtn.Name = "fixedSizeBtn";
+            this.fixedSizeBtn.Size = new System.Drawing.Size(141, 30);
+            this.fixedSizeBtn.TabIndex = 17;
+            this.fixedSizeBtn.Text = "Фикс. масштаб";
+            this.fixedSizeBtn.Click += new System.EventHandler(this.fixedSizeBtn_Click);
+            // 
+            // referenceChartBtn
+            // 
+            this.referenceChartBtn.BackColor = System.Drawing.Color.Transparent;
+            this.referenceChartBtn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.referenceChartBtn.BorderRadius = 10;
+            this.referenceChartBtn.BorderThickness = 1;
+            this.referenceChartBtn.CheckedState.BorderColor = System.Drawing.Color.Transparent;
+            this.referenceChartBtn.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.referenceChartBtn.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.referenceChartBtn.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.referenceChartBtn.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.referenceChartBtn.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.referenceChartBtn.FillColor = System.Drawing.Color.Transparent;
+            this.referenceChartBtn.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.referenceChartBtn.ForeColor = System.Drawing.Color.White;
+            this.referenceChartBtn.Location = new System.Drawing.Point(652, 12);
+            this.referenceChartBtn.Name = "referenceChartBtn";
+            this.referenceChartBtn.Size = new System.Drawing.Size(149, 30);
+            this.referenceChartBtn.TabIndex = 18;
+            this.referenceChartBtn.Text = "Эталонный график";
+            this.referenceChartBtn.Click += new System.EventHandler(this.referenceChartBtn_Click);
+            // 
+            // loadBtn
+            // 
+            this.loadBtn.BackColor = System.Drawing.Color.Transparent;
+            this.loadBtn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.loadBtn.BorderRadius = 10;
+            this.loadBtn.BorderThickness = 1;
+            this.loadBtn.CheckedState.BorderColor = System.Drawing.Color.Transparent;
+            this.loadBtn.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.loadBtn.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.loadBtn.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.loadBtn.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.loadBtn.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.loadBtn.FillColor = System.Drawing.Color.Transparent;
+            this.loadBtn.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.loadBtn.ForeColor = System.Drawing.Color.White;
+            this.loadBtn.Location = new System.Drawing.Point(807, 12);
+            this.loadBtn.Name = "loadBtn";
+            this.loadBtn.Size = new System.Drawing.Size(99, 30);
+            this.loadBtn.TabIndex = 19;
+            this.loadBtn.Text = "Загрузить";
+            this.loadBtn.Click += new System.EventHandler(this.loadBtn_Click);
+            // 
+            // saveBtn
+            // 
+            this.saveBtn.BackColor = System.Drawing.Color.Transparent;
+            this.saveBtn.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.saveBtn.BorderRadius = 10;
+            this.saveBtn.BorderThickness = 1;
+            this.saveBtn.CheckedState.BorderColor = System.Drawing.Color.Transparent;
+            this.saveBtn.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.saveBtn.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.saveBtn.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.saveBtn.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.saveBtn.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.saveBtn.FillColor = System.Drawing.Color.Transparent;
+            this.saveBtn.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.saveBtn.ForeColor = System.Drawing.Color.White;
+            this.saveBtn.Location = new System.Drawing.Point(912, 12);
+            this.saveBtn.Name = "saveBtn";
+            this.saveBtn.Size = new System.Drawing.Size(99, 30);
+            this.saveBtn.TabIndex = 20;
+            this.saveBtn.Text = "Сохранить";
+            this.saveBtn.Click += new System.EventHandler(this.saveBtn_Click);
+            // 
+            // StAStSwitch
+            // 
+            this.StAStSwitch.Animated = true;
+            this.StAStSwitch.BackColor = System.Drawing.Color.Transparent;
+            this.StAStSwitch.CheckedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.StAStSwitch.CheckedState.BorderThickness = 1;
+            this.StAStSwitch.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(35)))), ((int)(((byte)(40)))));
+            this.StAStSwitch.CheckedState.InnerBorderColor = System.Drawing.Color.White;
+            this.StAStSwitch.CheckedState.InnerColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.StAStSwitch.Location = new System.Drawing.Point(306, 57);
+            this.StAStSwitch.Name = "StAStSwitch";
+            this.StAStSwitch.Size = new System.Drawing.Size(47, 20);
+            this.StAStSwitch.TabIndex = 21;
+            this.StAStSwitch.UncheckedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.StAStSwitch.UncheckedState.BorderThickness = 1;
+            this.StAStSwitch.UncheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(35)))), ((int)(((byte)(40)))));
+            this.StAStSwitch.UncheckedState.InnerBorderColor = System.Drawing.Color.White;
+            this.StAStSwitch.UncheckedState.InnerColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.BackColor = System.Drawing.Color.Transparent;
+            this.label17.ForeColor = System.Drawing.SystemColors.Control;
+            this.label17.Location = new System.Drawing.Point(283, 59);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(17, 13);
+            this.label17.TabIndex = 24;
+            this.label17.Text = "St";
+            // 
+            // label18
+            // 
+            this.label18.AutoSize = true;
+            this.label18.BackColor = System.Drawing.Color.Transparent;
+            this.label18.ForeColor = System.Drawing.SystemColors.Control;
+            this.label18.Location = new System.Drawing.Point(359, 59);
+            this.label18.Name = "label18";
+            this.label18.Size = new System.Drawing.Size(24, 13);
+            this.label18.TabIndex = 25;
+            this.label18.Text = "ASt";
+            // 
+            // chanelComboBox1
+            // 
+            this.chanelComboBox1.BackColor = System.Drawing.Color.Transparent;
+            this.chanelComboBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.chanelComboBox1.BorderRadius = 10;
+            this.chanelComboBox1.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
+            this.chanelComboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.chanelComboBox1.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
+            this.chanelComboBox1.FocusedColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.chanelComboBox1.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.chanelComboBox1.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.chanelComboBox1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.chanelComboBox1.ItemHeight = 30;
+            this.chanelComboBox1.Items.AddRange(new object[] {
+            "1",
+            "2",
+            "3",
+            "4"});
+            this.chanelComboBox1.Location = new System.Drawing.Point(423, 48);
+            this.chanelComboBox1.Name = "chanelComboBox1";
+            this.chanelComboBox1.Size = new System.Drawing.Size(57, 36);
+            this.chanelComboBox1.TabIndex = 39;
+            // 
+            // label19
+            // 
+            this.label19.AutoSize = true;
+            this.label19.BackColor = System.Drawing.Color.Transparent;
+            this.label19.ForeColor = System.Drawing.SystemColors.Control;
+            this.label19.Location = new System.Drawing.Point(393, 59);
+            this.label19.Name = "label19";
+            this.label19.Size = new System.Drawing.Size(20, 13);
+            this.label19.TabIndex = 40;
+            this.label19.Text = "Ch";
+            // 
+            // SavePathTextBox
+            // 
+            this.SavePathTextBox.BackColor = System.Drawing.Color.Transparent;
+            this.SavePathTextBox.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.SavePathTextBox.BorderRadius = 6;
+            this.SavePathTextBox.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.SavePathTextBox.DefaultText = "";
+            this.SavePathTextBox.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
+            this.SavePathTextBox.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
+            this.SavePathTextBox.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.SavePathTextBox.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.SavePathTextBox.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(42)))), ((int)(((byte)(45)))), ((int)(((byte)(52)))));
+            this.SavePathTextBox.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.SavePathTextBox.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.SavePathTextBox.ForeColor = System.Drawing.Color.White;
+            this.SavePathTextBox.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.SavePathTextBox.Location = new System.Drawing.Point(590, 56);
+            this.SavePathTextBox.Name = "SavePathTextBox";
+            this.SavePathTextBox.PasswordChar = '\0';
+            this.SavePathTextBox.PlaceholderText = "";
+            this.SavePathTextBox.ReadOnly = true;
+            this.SavePathTextBox.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this.SavePathTextBox.SelectedText = "";
+            this.SavePathTextBox.Size = new System.Drawing.Size(316, 20);
+            this.SavePathTextBox.TabIndex = 24;
+            // 
+            // label20
+            // 
+            this.label20.AutoSize = true;
+            this.label20.BackColor = System.Drawing.Color.Transparent;
+            this.label20.ForeColor = System.Drawing.SystemColors.Control;
+            this.label20.Location = new System.Drawing.Point(490, 59);
+            this.label20.Name = "label20";
+            this.label20.Size = new System.Drawing.Size(93, 13);
+            this.label20.TabIndex = 41;
+            this.label20.Text = "Путь сохранения";
+            // 
+            // BrowseButton
+            // 
+            this.BrowseButton.BackColor = System.Drawing.Color.Transparent;
+            this.BrowseButton.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.BrowseButton.BorderRadius = 10;
+            this.BrowseButton.BorderThickness = 1;
+            this.BrowseButton.CheckedState.BorderColor = System.Drawing.Color.Transparent;
+            this.BrowseButton.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.BrowseButton.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.BrowseButton.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.BrowseButton.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.BrowseButton.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.BrowseButton.FillColor = System.Drawing.Color.Transparent;
+            this.BrowseButton.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.BrowseButton.ForeColor = System.Drawing.Color.White;
+            this.BrowseButton.Location = new System.Drawing.Point(912, 49);
+            this.BrowseButton.Name = "BrowseButton";
+            this.BrowseButton.Size = new System.Drawing.Size(99, 30);
+            this.BrowseButton.TabIndex = 42;
+            this.BrowseButton.Text = "Обзор";
+            this.BrowseButton.Click += new System.EventHandler(this.BrowseButton_Click);
+            // 
+            // reportButton
+            // 
+            this.reportButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.reportButton.BackColor = System.Drawing.Color.Transparent;
+            this.reportButton.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.reportButton.BorderRadius = 10;
+            this.reportButton.BorderThickness = 1;
+            this.reportButton.CheckedState.BorderColor = System.Drawing.Color.Transparent;
+            this.reportButton.CheckedState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(19)))), ((int)(((byte)(173)))), ((int)(((byte)(135)))));
+            this.reportButton.DisabledState.BorderColor = System.Drawing.Color.DarkGray;
+            this.reportButton.DisabledState.CustomBorderColor = System.Drawing.Color.DarkGray;
+            this.reportButton.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(169)))), ((int)(((byte)(169)))), ((int)(((byte)(169)))));
+            this.reportButton.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(141)))), ((int)(((byte)(141)))), ((int)(((byte)(141)))));
+            this.reportButton.FillColor = System.Drawing.Color.Transparent;
+            this.reportButton.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.reportButton.ForeColor = System.Drawing.Color.White;
+            this.reportButton.Location = new System.Drawing.Point(1062, 49);
+            this.reportButton.Name = "reportButton";
+            this.reportButton.Size = new System.Drawing.Size(120, 30);
+            this.reportButton.TabIndex = 43;
+            this.reportButton.Text = "Создать отчет";
+            this.reportButton.Click += new System.EventHandler(this.reportButton_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1132,6 +1414,19 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(34)))), ((int)(((byte)(35)))), ((int)(((byte)(40)))));
             this.ClientSize = new System.Drawing.Size(1196, 555);
             this.Controls.Add(this.parameterPanel);
+            this.Controls.Add(this.reportButton);
+            this.Controls.Add(this.BrowseButton);
+            this.Controls.Add(this.label20);
+            this.Controls.Add(this.SavePathTextBox);
+            this.Controls.Add(this.label19);
+            this.Controls.Add(this.label18);
+            this.Controls.Add(this.chanelComboBox1);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.StAStSwitch);
+            this.Controls.Add(this.saveBtn);
+            this.Controls.Add(this.loadBtn);
+            this.Controls.Add(this.referenceChartBtn);
+            this.Controls.Add(this.fixedSizeBtn);
             this.Controls.Add(this.axesWaveLenBtn);
             this.Controls.Add(this.pixelXToolStripMenuItem);
             this.Controls.Add(this.clearCurveBtn);
@@ -1139,7 +1434,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(1212, 594);
             this.Name = "Form1";
-            this.Text = "SpectrometerApp";
+            this.Text = "SpectraVision";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.guna2Panel1.ResumeLayout(false);
             this.guna2Panel1.PerformLayout();
@@ -1153,6 +1448,7 @@
             this.guna2Panel3.ResumeLayout(false);
             this.guna2Panel3.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -1165,7 +1461,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label8;
         public System.Windows.Forms.Label notificationsLabel;
-        private System.Windows.Forms.Panel StatusPanel;
         private Guna.UI2.WinForms.Guna2Button oneScanBtn;
         private Guna.UI2.WinForms.Guna2Panel guna2Panel1;
         private Guna.UI2.WinForms.Guna2Panel guna2Panel2;
@@ -1175,7 +1470,6 @@
         private Guna.UI2.WinForms.Guna2TextBox timeMicrosInput;
         private Guna.UI2.WinForms.Guna2TextBox averageInput;
         private Guna.UI2.WinForms.Guna2TextBox ScanIntervalInput;
-        private Guna.UI2.WinForms.Guna2TextBox filterInput;
         private Guna.UI2.WinForms.Guna2TextBox quantityPeakInput;
         private Guna.UI2.WinForms.Guna2TextBox thresholdInput;
         private System.Windows.Forms.Label label2;
@@ -1186,9 +1480,7 @@
         private Guna.UI2.WinForms.Guna2Button axesWaveLenBtn;
         private Guna.UI2.WinForms.Guna2Panel parameterPanel;
         private Guna.UI2.WinForms.Guna2Panel guna2Panel3;
-        private Guna.UI2.WinForms.Guna2Button loadSpectralDataMenuItem;
         private System.Windows.Forms.Label label7;
-        private Guna.UI2.WinForms.Guna2Button manualSaveDataToolStripMenuItem;
         private Guna.UI2.WinForms.Guna2Button saveToPNGMenuItem;
         private Guna.UI2.WinForms.Guna2Panel guna2Panel4;
         private Guna.UI2.WinForms.Guna2CheckBox nonlinearCorCh;
@@ -1213,6 +1505,24 @@
         private Guna.UI2.WinForms.Guna2Button loadDarkModeBtn;
         private Guna.UI2.WinForms.Guna2Button parameterQuit;
         private Guna.UI2.WinForms.Guna2Button closeSpectrometerBtn;
+        private System.Windows.Forms.ComboBox filterInput;
+        private Guna.UI2.WinForms.Guna2Button fixedSizeBtn;
+        private Guna.UI2.WinForms.Guna2Button referenceChartBtn;
+        private Guna.UI2.WinForms.Guna2Button loadBtn;
+        private Guna.UI2.WinForms.Guna2Button saveBtn;
+        private Guna.UI2.WinForms.Guna2Button referenceChartLoadBtn;
+        private Guna.UI2.WinForms.Guna2ComboBox quantityLoadGraph;
+        private System.Windows.Forms.Label label16;
+        private Guna.UI2.WinForms.Guna2ToggleSwitch StAStSwitch;
+        private System.Windows.Forms.Label label17;
+        private System.Windows.Forms.Label label18;
+        private Guna.UI2.WinForms.Guna2ComboBox chanelComboBox1;
+        private System.Windows.Forms.Label label19;
+        private Guna.UI2.WinForms.Guna2TextBox SavePathTextBox;
+        private System.Windows.Forms.Label label20;
+        private Guna.UI2.WinForms.Guna2Button BrowseButton;
+        private Guna.UI2.WinForms.Guna2Button reportButton;
+        private Guna.UI2.WinForms.Guna2CheckBox reportModeCheckBox;
     }
 }
 

@@ -1,26 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using OxyPlot;
-using OxyPlot.Axes;
-using OxyPlot.Series;
-using OxyPlot.WindowsForms;
 using HP2000_wrapper;
-using System.Threading;
-using System.IO;
-
 using System.Text.RegularExpressions;
 using System.Runtime.InteropServices;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
+using System.Threading;
+using System.Drawing;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using WindowsFormsApp1;
+using OxyPlot.WindowsForms;
+using OxyPlot;
+using System.Linq.Expressions;
+using System.IO;
 
 namespace WindowsFormsApp1
 {
@@ -30,58 +20,68 @@ namespace WindowsFormsApp1
 
         private HP2000Wrapper wrapper = new HP2000Wrapper();
         
-        private dynamic spectrometer = new SpectrometerWork();        
-       
+        private SpectrometerWork spectrometer = new SpectrometerWork();
+
+        private OxyPlotSchedule plotView;
+
         private float[,] data; // получение данных со спектрометра
-        private float[,] dataWaveLen;
-        private float[,] dataPixel;
-        private float[,] downloadedData;
-        private float[,] darkModeData = new float[512,2];
+        private float[,] dataWaveLen; // данные для отображения на графике длин волн
+        private float[,] dataPixel; // данные для отображения на графике пиксели
+        private float[,] downloadedData; // данные со сторонних файлов
+        private float[,] referenceData; // данные для построения эталонного графика
+        private float[,] darkModeData = new float[512,2]; // данные для вычета темногого спектра
 
         private bool ContinuousScanningFlag; // флаг для работы с автоматическим сканированием
-        private dynamic plotView;
-        
-        private bool waveCorCheck;
-        private bool nonlinCheck;
-        private bool darkSpectCheck;
-        private int qtLines;
-        private int qtCount = 0;
-        private bool isOpen;
+                
+        private bool waveCorCheck; // переменная коррекции измерения
+        private bool nonlinCheck; // переменная коррекции измерения
+        private bool darkSpectCheck; // переменная коррекции измерения
+        private int qtLines; // количество кривых
+        private int qtCount = 0; // счетчик количества кривых
+        private int qtCountForDownolad = 0; // счетчик количества кривых для сторонних данных
+        private bool isOpen; // переменная отображает статус спектрометра, включен он или нет
+        private bool fixedSize;
+
+        private CancellationTokenSource cts;
+        public event Action OnRKeyPressed;
 
         public Form1()
         {
-            InitializeComponent();
-            ApplyDarkTitleBar();
-
-            
-
+            InitializeComponent();    
         }
-
         private void Form1_Load(object sender, EventArgs e)
         {
+            ApplyDarkTitleBar(); // темная тема для тайтлбара
+
+            this.KeyDown += OnKeyDown;
+            this.KeyPreview = true;
+            this.FormClosing += Form1_FormClosing;
+
             // =======работа с графиком========
             axesWaveLenBtn.Checked = true;// по дефолту отрисовываем график с длинами волн на оси Х
-            plotView = new OxyPlotSchedule(spectrometer.saveData());// подключение графика
+            plotView = new OxyPlotSchedule(spectrometer.processingData());// подключение графика
             
-            var addPlot = plotView.Addplot();// ф-ция отрисовки графика
-            plotView.hidePlot(); // необходим для корректного отображения загруженных данных
+            var addPlot = plotView.addplot();// метод отрисовки графика
+            
             Controls.Add(addPlot);// Добавляем PlotView на форму
             
 
             // =======работа со спектрометром========
             // подключение спектрометра
-            isOpen = wrapper.openSpectraMeter();
-            
-            //spectrometer.statusSpectrometer(StatusPanel,true);
+            isOpen = wrapper.openSpectraMeter();                      
 
             // если спектрометр не подключен запрещаем сканирование
             if (isOpen != true)
             {
+                // отключаем кнопки если спектрометр не подключен для предотвращения ошибок
                 oneScanBtn.Enabled = false;
                 ContinScanBtn.Enabled = false;
                 stopScanBtn.Enabled = false;
                 closeSpectrometerBtn.Enabled = false;
                 infoSpectrometerBtn.Enabled=false;
+                darkModeBtn.Enabled = false;
+                loadDarkModeBtn.Enabled=false;
+                saveDarkMode.Enabled=false;
                 notificationsLabel.Text = "Не удалось подключиться к спектрометру.";
                 MessageBox.Show("Спектрометр не подключен!", "", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
@@ -89,21 +89,71 @@ namespace WindowsFormsApp1
             {
                 wrapper.initialize(); // инициализируем спектрометр               
                 notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";
-                onSpectrometer.Enabled = false;
+                onSpectrometer.Enabled = false; // отключаем кнопку подключения спектрометра
             }
 
-            quantityLines.SelectedIndex = 0;// выставляем дефолтное количесство линий графика
+            if (reportModeCheckBox.Checked == false)
+            {
+                StAStSwitch.Enabled = false;
+                chanelComboBox1.Enabled = false;
+                SavePathTextBox.Enabled = false;
+                BrowseButton.Enabled = false;
+                reportButton.Enabled = false;
+            }
 
-            
+            reportModeCheckBox.CheckedChanged += reportModeCheckBox_CheckedChanged;
 
 
+
+            reportModeCheckBox.Checked = Properties.Settings.Default.reportModeCheckBox;
+            timeMicrosInput.Text = Properties.Settings.Default.timeMicrosInput;
+            ScanIntervalInput.Text = Properties.Settings.Default.ScanIntervalInput;
+            averageInput.Text = Properties.Settings.Default.averageInput;
+            thresholdInput.Text = Properties.Settings.Default.thresholdInput;
+            quantityPeakInput.Text = Properties.Settings.Default.quantityPeakInput;
+            filterInput.SelectedIndex = Properties.Settings.Default.filterInput;
+            quantityLoadGraph.SelectedIndex = Properties.Settings.Default.quantityLoadGraph;
+            quantityLines.SelectedIndex = Properties.Settings.Default.quantityLines;
+            chanelComboBox1.SelectedIndex = Properties.Settings.Default.chanelComboBox1;
+            StAStSwitch.Checked = Properties.Settings.Default.StAStSwitch;
+            SavePathTextBox.Text = Properties.Settings.Default.LastFolderPath;
 
         }
 
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            // Получаем текущую раскладку клавиатуры
+            var currentInputLanguage = InputLanguage.CurrentInputLanguage;
+            string currentLayout = currentInputLanguage.Culture.TwoLetterISOLanguageName;
+            if (e.KeyCode == Keys.R || (e.KeyCode == Keys.K && currentLayout == "ru"))
+            {
+                
+                plotView.plotViewKeyDown();
+            }
+        }
+
+ 
         //одиночное сканирование
         private async void oneScanBtn_Click(object sender, EventArgs e)
         {
-          await spectrometerScanning();
+            cts?.Dispose(); // Освобождаем старый токен, если он существует
+            cts = new CancellationTokenSource(); // Создаём новый источник токенов
+            var token = cts.Token;
+            // проверка на пустоту и ввод данных больше нуля
+            bool conditionScan = averageInput.Text != "" && timeMicrosInput.Text != "" && filterInput.Text != "" && int.Parse(averageInput.Text) >= 0 && int.Parse(timeMicrosInput.Text) >= 0 && int.Parse(filterInput.Text) >= 0;
+            
+                if (conditionScan)
+                {
+                    await spectrometerScanning(token);
+                    oneScanBtn.Enabled = true;
+                    ContinScanBtn.Enabled = true;
+                }
+                else
+                {
+                    MessageBox.Show("Некорректные значения!");
+                }
+            
+            
         }
 
         // непрерывное сканирование. Асинхронно выполняем одиночное сканирование в цикле до тех пор пока не изменим флаг
@@ -111,28 +161,47 @@ namespace WindowsFormsApp1
         {
             ContinuousScanningFlag = true;
             int intervalScan = int.Parse(ScanIntervalInput.Text);
-            while (ContinuousScanningFlag == true)
+            bool conditionScan = averageInput.Text != "" && timeMicrosInput.Text != "" && filterInput.Text != "" && int.Parse(averageInput.Text) >= 0 && int.Parse(timeMicrosInput.Text) >= 0 && int.Parse(filterInput.Text) >= 0 && intervalScan >= 0;
+            if (conditionScan)
             {
-                ContinScanBtn.Checked = true;
-                await spectrometerScanning();
-                await Task.Delay(intervalScan);
-                
+                while (ContinuousScanningFlag == true)
+                {
+                    ContinScanBtn.Checked = true;
+                    cts = new CancellationTokenSource(); // Создаём новый источник токенов
+                    var token = cts.Token;
+                    await spectrometerScanning(token); 
+                    await Task.Delay(intervalScan);
+                    
+                }
+            }
+            else
+            {
+                MessageBox.Show("Некорректные значения!!!");
             }
             ContinScanBtn.Checked = false;
-            
-
+            oneScanBtn.Enabled = true;
+            ContinScanBtn.Enabled = true;
         }
 
         // устанавливает флаг на окончание автоматического сканирования
         private void stopScanBtn_Click(object sender, EventArgs e)
         {
             ContinuousScanningFlag = false;
+            cts?.Cancel();
+            cts.Dispose();
+            cts = null;
+            oneScanBtn.Enabled = true;
+            ContinScanBtn.Enabled= true;
+            
+            progressBar1.Value = 0;
+
         }
 
         // кнопка повторного подключения спектрометра если он по каким-либо причинам отвалился или программа была включена до подключения спектрометра в компьютер
         private void onSpectrometer_Click(object sender, EventArgs e)
         {
             bool openSpectr = wrapper.openSpectraMeter();
+            
 
             if (isOpen != true)
             {
@@ -144,12 +213,16 @@ namespace WindowsFormsApp1
                 oneScanBtn.Enabled = true;
                 ContinScanBtn.Enabled = true;
                 stopScanBtn.Enabled = true;
-                wrapper.initialize(); // инициализируем спектрометр
-                notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";
-                isOpen = true;
+                darkModeBtn.Enabled = true;
+                loadDarkModeBtn.Enabled = true;
+                saveDarkMode.Enabled = true;
                 onSpectrometer.Enabled = false;
                 closeSpectrometerBtn.Enabled = true;
                 infoSpectrometerBtn.Enabled = true;
+                wrapper.initialize(); // инициализируем спектрометр
+                notificationsLabel.Text = "Успешное подключение и инициализация спектрометра.";
+                isOpen = true;
+                
             }
         }
 
@@ -160,28 +233,98 @@ namespace WindowsFormsApp1
             dataWaveLen = null;
             dataPixel = null;
             downloadedData = null;
+            referenceData = null;
             plotView.hidePlot();// убираем старые значения 
-            
+            referenceChartBtn.Checked = false;
+            qtCount = 0;
+            qtCountForDownolad = 0;
 
         }
-
-        // событие обрабатывает загрузку сторонних файлов 
-        private void loadSpectralDataMenuItem_Click(object sender, EventArgs e)
+        private void referenceChartBtn_Click(object sender, EventArgs e)
         {
-            string pathReadyData = new LoadAndSaveReadyData().LoadReadyData();//получаем путь до нужного файла
-            if (pathReadyData != null)
-            {   
-                downloadedData = new GetData().Data(pathReadyData);// считываем обновленные данные из файла
-                plotView.updatePlot(downloadedData, true);// выводим новый график
+            if(referenceData != null)
+            {
+                referenceChartBtn.Checked = !referenceChartBtn.Checked;
+                plotView.toggleVisibleReferenceChart();
             }
-            parameterPanel.Visible = false;
+            else
+            {
+                notificationsLabel.Text = "Подключите эталонный график";
+            }
+        }
+        private void referenceChartLoadBtn_Click(object sender, EventArgs e)
+        {
+            string pathReadyData = new LoadAndSaveReadyData().loadReadyData();//получаем путь до нужного файла
+            if (pathReadyData != null)
+            {
+                referenceData = new GetData().Data(pathReadyData);// считываем обновленные данные из файла
+                if (referenceData != null)
+                {
+                    plotView.updatePlot(fixedSizeBtn.Checked, referenceData, "reference", true);// выводим новый график
+                    if (referenceData[511, 0] == 511)
+                    {
+                        plotView.changeAxes(false);// меняем ось на Х на пикслели
+                        pixelXToolStripMenuItem.Checked = true;//активируем кнопку 
+                        axesWaveLenBtn.Checked = false;
+                    }
+                    else
+                    {
+                        plotView.changeAxes(true);
+                        pixelXToolStripMenuItem.Checked = false;
+                        axesWaveLenBtn.Checked = true;
+                    }
+                    parameterPanel.Visible = false;
+                }
 
+            }
+            referenceChartBtn.Checked = true;
         }
 
-        // событие обрабатывает ручное сохранение спеткральных данных 
-        private void manualSaveDataToolStripMenuItem_Click(object sender, EventArgs e)
+        // событие обрабатывает загрузку сторонних файлов
+        private void loadBtn_Click(object sender, EventArgs e)
         {
-            new LoadAndSaveReadyData().SaveReadyData(data);// сохраняем данные
+            int qtLoadGraph = int.Parse(quantityLoadGraph.Text);
+            if (qtCountForDownolad >= qtLoadGraph)
+            {
+                qtCountForDownolad = 0;
+
+            }
+            qtCountForDownolad++;
+
+            string pathReadyData = new LoadAndSaveReadyData().loadReadyData();//получаем путь до нужного файла
+            if (pathReadyData != null)
+            {
+                downloadedData = new GetData().Data(pathReadyData);// считываем обновленные данные из файла
+                if (downloadedData != null)
+                {
+                    
+                    plotView.updatePlot(fixedSizeBtn.Checked, downloadedData, "load", qtLoadGraph: qtLoadGraph);// выводим новый график
+                    plotView.dataForSearchPeaks(downloadedData, qtCountForDownolad);
+                    if (downloadedData[511, 0] == 511)
+                    {
+                        plotView.changeAxes(false);// меняем ось на Х на пикслели
+                        pixelXToolStripMenuItem.Checked = true;//активируем кнопку 
+                        axesWaveLenBtn.Checked = false;
+                    }
+                    else
+                    {
+                        plotView.changeAxes(true);
+                        pixelXToolStripMenuItem.Checked = false;
+                        axesWaveLenBtn.Checked = true;
+                    }
+                    parameterPanel.Visible = false;
+                }
+
+            }
+            else
+            {
+                qtCountForDownolad--;
+            }
+        }
+        // событие обрабатывает ручное сохранение спеткральных данных 
+        private void saveBtn_Click(object sender, EventArgs e)
+        {
+            new LoadAndSaveReadyData().saveData(data);// сохраняем данные
             parameterPanel.Visible = false;
         }
 
@@ -190,11 +333,12 @@ namespace WindowsFormsApp1
         // событие обрабатывает поиск пиковых значений
         private void findPeakBtn_Click(object sender, EventArgs e)
         {
-            if(thresholdInput.Text != "" && quantityPeakInput.Text != "" && Regex.IsMatch(thresholdInput.Text, @"^\d+$") && Regex.IsMatch(quantityPeakInput.Text, @"^\d+$"))
+            if(thresholdInput.Text != "" && quantityPeakInput.Text != "" && Regex.IsMatch(quantityPeakInput.Text, @"^\d+$"))
             {
                 int thresHold = int.Parse(thresholdInput.Text);// порог поиска
-                int quantityPeak = int.Parse(quantityPeakInput.Text);// ширина поиска
-                plotView.AddPeakAnnotations(thresHold, quantityPeak);
+                int quantityPeak = int.Parse(quantityPeakInput.Text);// количество пиковых значений
+                plotView.addPeakAnnotations(thresHold, quantityPeak, qtCount, qtCountForDownolad);
+                
             }
             else
             {
@@ -206,6 +350,7 @@ namespace WindowsFormsApp1
         //событие обрабатывает переключение оси Х на пиксели
         private void pixelXToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            qtCount = 1;
             int filter = int.Parse(filterInput.Text);// парсим значение фильтра для метода сохранения новых данных
 
             pixelXToolStripMenuItem.Checked = true;// устанавливает флаг отображения данных в пикселях в положение truе      
@@ -214,7 +359,7 @@ namespace WindowsFormsApp1
 
             if (dataPixel != null)
             {                
-                plotView.updatePlot(dataPixel, false, false);// обновляем график
+                plotView.updatePlot(fixedSizeBtn.Checked,dataPixel, "scan", false);// обновляем график
             }
 
             if (downloadedData != null)
@@ -223,7 +368,16 @@ namespace WindowsFormsApp1
                 {
                     downloadedData[i, 0] = i;
                 }
-                plotView.updatePlot(downloadedData, true, false);// обновляем график
+                plotView.updatePlot(fixedSizeBtn.Checked, downloadedData, "load", false);// обновляем график
+            }
+
+            if(referenceData != null)
+            {
+                for (int i = 0; i < referenceData.GetLength(0); i++)
+                {
+                    referenceData[i, 0] = i;
+                }
+                plotView.updatePlot(fixedSizeBtn.Checked, referenceData, "reference", false);// обновляем график
             }
             plotView.changeAxes(false); // изменяем ось на пиксели
         }
@@ -231,6 +385,7 @@ namespace WindowsFormsApp1
         //событие обрабатывает переключение оси Х на длины волн
         private void waveLengthToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            qtCount = 1;
             int filter = int.Parse(filterInput.Text);// парсим значение фильтра для метода сохранения новых данных
 
             axesWaveLenBtn.Checked = true;//устанавливает флаг отображения данных в длинах волн в положение truе   
@@ -242,7 +397,7 @@ namespace WindowsFormsApp1
             if (dataWaveLen != null)
             {
                 
-                plotView.updatePlot(dataWaveLen, false, true);// обновляем график
+                plotView.updatePlot(fixedSizeBtn.Checked,dataWaveLen, "scan", true);// обновляем график
             }
 
             if (downloadedData != null)
@@ -251,7 +406,15 @@ namespace WindowsFormsApp1
                 {
                     downloadedData[i, 0] = wavelengthArray[i];
                 }
-                plotView.updatePlot(downloadedData, true, true);// обновляем график
+                plotView.updatePlot(fixedSizeBtn.Checked, downloadedData, "load", true);// обновляем график
+            }
+            if (referenceData != null)
+            {
+                for (int i = 0; i < referenceData.GetLength(0); i++)
+                {
+                    referenceData[i, 0] = wavelengthArray[i];
+                }
+                plotView.updatePlot(fixedSizeBtn.Checked, referenceData, "reference", true);// обновляем график
             }
             plotView.changeAxes(true); // изменяем ось на длины волн
         }
@@ -305,27 +468,7 @@ namespace WindowsFormsApp1
             parameterPanel.Visible = !parameterPanel.Visible;
         }
 
-        async private Task spectrometerStatus()
-        {
-            await Task.Run(async() =>
-            {
-                while (true)
-                {
-                    
-                    if (wrapper.openSpectraMeter() == true)
-                    {
-                        StatusPanel.BackColor = Color.Green; // Устанавливаем зелёный
-                    }
-                    else
-                    {
-                        StatusPanel.BackColor = Color.Red; // Устанавливаем красный
-                    }
-                    
-                    await Task.Delay(1000);
-                }
 
-            });
-        }
 
         private void ApplyDarkTitleBar()
         {
@@ -340,34 +483,51 @@ namespace WindowsFormsApp1
 
 
 
-        private void darkModeBtn_Click(object sender, EventArgs e)
+        async private void darkModeBtn_Click(object sender, EventArgs e)
         {
             darkModeBtn.Checked = !darkModeBtn.Checked;
             if (darkModeBtn.Checked )
             {
-                oneScanBtn_Click(null, EventArgs.Empty);
+                
+                cts?.Dispose(); // Освобождаем старый токен, если он существует
+                cts = new CancellationTokenSource(); // Создаём новый источник токенов
+                var token = cts.Token;
+                try
+                {
+                    await spectrometerScanning(token);
+                    oneScanBtn.Enabled = true;
+                    ContinScanBtn.Enabled = true;
+                }
+                catch (OperationCanceledException)
+                {
+                    notificationsLabel.Text = "Операция была отменена!";
+                }
 
             }
             
             darkModeData = data;
-            
+   
         }
 
         private void loadDarkModeBtn_Click(object sender, EventArgs e)
         {
             darkModeBtn.Checked = true;
-            string pathReadyData = new LoadAndSaveReadyData().LoadReadyData();//получаем путь до нужного файла
+            string pathReadyData = new LoadAndSaveReadyData().loadReadyData();//получаем путь до нужного файла
             if (pathReadyData != null)
             {
                 downloadedData = new GetData().Data(pathReadyData);// считываем обновленные данные из файла
                 darkModeData = downloadedData;
                
             }
+            else
+            {
+                darkModeBtn.Checked = false;
+            }
         }
 
         private void saveDarkMode_Click(object sender, EventArgs e)
         {
-            new LoadAndSaveReadyData().SaveReadyData(darkModeData);// сохраняем данные
+             new LoadAndSaveReadyData().saveData(data);// сохраняем данные
         }
 
 
@@ -377,102 +537,98 @@ namespace WindowsFormsApp1
             parameterPanel.Visible = false;
         }
 
-        async private Task spectrometerScanning()
+        async private Task spectrometerScanning(CancellationToken token)
         {
 
             await Task.Run(async() =>
             {
                 float[,] tempData = new float[512, 2];
+                
+                oneScanBtn.Enabled = false;
+                ContinScanBtn.Enabled = false;
+                int timeMicros = int.Parse(timeMicrosInput.Text);// время сканирования
+                int average = int.Parse(averageInput.Text); // усредненное сканирование
+                int filter = int.Parse(filterInput.Text); // фильтр
+                
+                progressBar1.Maximum = average;
+                progressBar1.Value = 0;
 
-                if (averageInput.Text != "" && timeMicrosInput.Text != "" && filterInput.Text != "") // && Regex.IsMatch(timeMicrosInput.Text, @"^\d+$") && Regex.IsMatch(averageInput.Text, @"^\d+$") && Regex.IsMatch(filterInput.Text, @"^\d+$")
+                // в цикле реализуем усредненое сканирование 
+                for (int i = 1; i <= average; i++)
                 {
-                    int timeMicros = int.Parse(timeMicrosInput.Text);// время сканирования
-                    int average = int.Parse(averageInput.Text); // усредненное сканирование
-                    int filter = int.Parse(filterInput.Text); // фильтр
-                    if (filter > 6)
+                    //token.ThrowIfCancellationRequested();
+                    if (token.IsCancellationRequested)
                     {
-                        MessageBox.Show("Установите значение фильтра от 0 до 5");
+                        notificationsLabel.Text = "Операция прервана!";
+                        progressBar1.Value = 0;
+                        return;
                     }
-                    progressBar1.Maximum = average;
-                    progressBar1.Value = 0;
-
-                    // в цикле реализуем усредненое сканирование 
-                    for (int i = 1; i <= average; i++)
+                    // условие на поключение триггера
+                    if (extTriggerMenuItem.Checked == true)
                     {
-                        // условие на поключение триггера
-                        if (extTriggerMenuItem.Checked == true)
+
+                        int j = 0;
+                        wrapper.getExtTrigSpectrum(timeMicros);
+
+                        while (extTriggerMenuItem.Checked == true)
                         {
-
-                            int j = 0;
-                            wrapper.getExtTrigSpectrum(timeMicros);
-
-                            while (extTriggerMenuItem.Checked == true)
+                            notificationsLabel.Invoke(new Action(() =>
+                            {
+                                notificationsLabel.Text = $"Ожидаю триггер: {j++} сек";
+                            }));
+                            
+                            if (wrapper.getSpectrumDataReadyFlag() == 1)
                             {
                                 notificationsLabel.Invoke(new Action(() =>
                                 {
-                                    notificationsLabel.Text = $"Ожидаю триггер: {j++} сек";
+                                    notificationsLabel.Text = $"данные триггера готовы";
                                 }));
-                                oneScanBtn.Enabled = false;
-                                if (wrapper.getSpectrumDataReadyFlag() == 1)
-                                {
-                                    notificationsLabel.Invoke(new Action(() =>
-                                    {
-                                        notificationsLabel.Text = $"данные триггера готовы";
-                                    }));
-                                    break;
-                                }
-                                await Task.Delay(1000);
+                                break;
                             }
-                            oneScanBtn.Enabled = true;
-
-
+                            await Task.Delay(1000);
                         }
-                        else
-                        {
-                            notificationsLabel.Text = spectrometer.loadData(timeMicros);//загружаем данные в спектрометр
-                            //spectrometer.readyData(notificationsLabel);
-                            while(wrapper.getSpectrumDataReadyFlag()!=1)
-                            {
-                                wrapper.getSpectrumDataReadyFlag();
-                            }
-                            if (wrapper.getSpectrumDataReadyFlag() == 1)
-                            {
-                                notificationsLabel.Text = $"данные спектрометра готовы";
-                            }
-
-                        }
-
-                        dataWaveLen = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные с длинами волн
-                        dataPixel = spectrometer.saveData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false);// сохраняем данные с пикселями
-
-                        //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
-                        if (axesWaveLenBtn.Checked == true)
-                        {
-                            data = dataWaveLen;
-                        }
-                        else
-                        {
-                            data = dataPixel;
-                        }
-
-                        // складываем полученные значения в промежуточном массиве
-                        for (int j = 0; j < 512; j++)
-                        {
-                            tempData[j, 0] += data[j, 0];
-                            tempData[j, 1] += data[j, 1];
-                        }
-                        progressBar1.Value++;
+                        oneScanBtn.Enabled = true;
                     }
-                    // сумму значений делим на их количество (находим среднее арифметическое)
-                    for (int i = 0; i < 512; i++)
+                    else
                     {
-                        data[i, 1] = tempData[i, 1] / average;
+                        notificationsLabel.Text = spectrometer.loadData(timeMicros);//загружаем данные в спектрометр
+                        
+                        while(wrapper.getSpectrumDataReadyFlag()!=1)
+                        {
+                            wrapper.getSpectrumDataReadyFlag();
+                        }
+                        
+                        notificationsLabel.Text = $"данные спектрометра готовы";
                     }
+
+                    dataWaveLen = spectrometer.processingData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, true);// сохраняем данные с длинами волн
+                    dataPixel = spectrometer.processingData(filter, darkSpectCheck, nonlinCheck, waveCorCheck, false);// сохраняем данные с пикселями
+
+                    //условие по которому определяем в каком виде сохрянять данные(в пикселях или длинах волн)
+                    if (axesWaveLenBtn.Checked == true)
+                    {
+                        data = dataWaveLen;
+                    }
+                    else
+                    {
+                        data = dataPixel;
+                    }
+
+                    // складываем полученные значения в промежуточном массиве
+                    for (int j = 0; j < 512; j++)
+                    {
+                        tempData[j, 0] += data[j, 0];
+                        tempData[j, 1] += data[j, 1];
+                    }
+                    progressBar1.Value++;
                 }
-                else
+                // сумму значений делим на их количество (находим среднее арифметическое)
+                for (int i = 0; i < 512; i++)
                 {
-                    MessageBox.Show("Некорректные значения!!!");
+                    data[i, 1] = tempData[i, 1] / average;
                 }
+                
+                
 
                 if (darkModeBtn.Checked == true)
                 {
@@ -483,19 +639,30 @@ namespace WindowsFormsApp1
                         dataWaveLen[i, 1] = data[i, 1];
                     }
                 }
-
                 qtLines = int.Parse(quantityLines.Text);
-                plotView.updatePlot(data, false, axesWaveLenBtn.Checked, qtLines);// выводим новый график
+                if (qtCount >= qtLines)
+                {
+                    qtCount = 0;
+                    
+                }
+                qtCount++;
+                
+                plotView.updatePlot(fixedSizeBtn.Checked,data, "scan", axesWaveLenBtn.Checked, qtLines);// выводим новый график
+                plotView.dataForSearchPeaks(data, qtCount);
                 plotView.changeAxes(axesWaveLenBtn.Checked);
 
+                
+                
+
                 // если кнопка в меню которая отвечает за автоматическое сохранение активна сохраняем данные автоматом
-                if (automaticSaveToolStripMenuItem.Checked == true)
+                if (automaticSaveToolStripMenuItem.Checked || reportModeCheckBox.Checked)
                 {
-                    new LoadAndSaveReadyData().automaticSaveData(data);
+                    string savePath = Properties.Settings.Default.LastFolderPath;
+                    new LoadAndSaveReadyData().automaticSaveData(data, reportModeCheckBox.Checked, StAStSwitch.Checked, filterInput.SelectedIndex, savePath);
                 }
 
                 tempData = null;
-                
+                downloadedData = null;
                 
             });
         }
@@ -512,6 +679,9 @@ namespace WindowsFormsApp1
                 ContinScanBtn.Enabled = false;
                 stopScanBtn.Enabled = false;
                 infoSpectrometerBtn.Enabled = false;
+                darkModeBtn.Enabled = false;
+                loadDarkModeBtn.Enabled= false;
+                saveDarkMode.Enabled = false;
             }
             else
             {
@@ -525,6 +695,104 @@ namespace WindowsFormsApp1
         {
             aboutSprctrometer form2 = new aboutSprctrometer();
             form2.Show();
+        }
+
+        private void fixedSizeBtn_Click(object sender, EventArgs e)
+        {
+            fixedSizeBtn.Checked = !fixedSizeBtn.Checked;
+        }
+
+        private void Form1_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            // Сохраняем значения пользователя
+            Properties.Settings.Default.timeMicrosInput = timeMicrosInput.Text; 
+            Properties.Settings.Default.ScanIntervalInput = ScanIntervalInput.Text;
+            Properties.Settings.Default.averageInput = averageInput.Text;
+            Properties.Settings.Default.thresholdInput = thresholdInput.Text;
+            Properties.Settings.Default.quantityPeakInput = quantityPeakInput.Text;
+            Properties.Settings.Default.quantityLoadGraph = quantityLoadGraph.SelectedIndex;
+            Properties.Settings.Default.quantityLines = quantityLines.SelectedIndex;
+            Properties.Settings.Default.filterInput = filterInput.SelectedIndex;
+            Properties.Settings.Default.chanelComboBox1 = chanelComboBox1.SelectedIndex;
+            Properties.Settings.Default.StAStSwitch = StAStSwitch.Checked;
+            Properties.Settings.Default.reportModeCheckBox = reportModeCheckBox.Checked;
+            Properties.Settings.Default.Save(); // Сохраняем настройки
+        }
+
+        private void BrowseButton_Click(object sender, EventArgs e)
+        {
+            string browsePath = new LoadAndSaveReadyData().browsePath();
+            if(browsePath != null)
+            {
+                SavePathTextBox.Text = browsePath;
+            }
+            
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void reportModeCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (reportModeCheckBox.Checked == false)
+            {
+                StAStSwitch.Enabled = false;
+                chanelComboBox1.Enabled = false;
+                SavePathTextBox.Enabled = false;
+                BrowseButton.Enabled = false;
+                reportButton.Enabled = false;
+            }
+            else
+            {
+                StAStSwitch.Enabled = true;
+                chanelComboBox1.Enabled = true;
+                SavePathTextBox.Enabled = true;
+                BrowseButton.Enabled = true;
+                reportButton.Enabled = true;
+            }
+        }
+
+        private void reportButton_Click(object sender, EventArgs e)
+        {
+
+            for(int i=1;i<=4;i++)
+            {
+                if (File.Exists(Properties.Settings.Default.LastFolderPath + $"\\ASt_ch{i}.txt") && File.Exists(Properties.Settings.Default.LastFolderPath + $"\\St_ch{i}.txt"))
+                {
+                    string loadPath = Properties.Settings.Default.LastFolderPath + $"\\ASt_ch{i}.txt";
+                    float[,] dataASt = new GetData().Data(loadPath);
+                    plotView.updatePlot(fixedSizeBtn.Checked, dataASt, "load", axesWaveLenBtn.Checked, 2, 2);
+
+                    loadPath = Properties.Settings.Default.LastFolderPath + $"\\St_ch{i}.txt";
+                    float[,] dataSt = new GetData().Data(loadPath);
+                    plotView.updatePlot(fixedSizeBtn.Checked, dataSt, "load", axesWaveLenBtn.Checked, 2, 2);
+
+                    string savePNGPath = Properties.Settings.Default.LastFolderPath + $"\\ch{i+100}.png";
+
+                    
+
+                    plotView.saveReportPng(savePNGPath, dataSt, dataASt);
+                    plotView.CreateImageWithText(savePNGPath, Properties.Settings.Default.LastFolderPath + $"\\ch{i}.png", dataSt, dataASt);
+                    
+                    
+                    
+                    File.Delete(savePNGPath);
+                }
+                if(!File.Exists(Properties.Settings.Default.LastFolderPath + $"\\ASt_ch{i}.txt") && File.Exists(Properties.Settings.Default.LastFolderPath + $"\\St_ch{i}.txt"))
+                {
+                    MessageBox.Show($"ASt файлa в канале {i} не хватает!");
+                }
+                if (File.Exists(Properties.Settings.Default.LastFolderPath + $"\\ASt_ch{i}.txt") && !File.Exists(Properties.Settings.Default.LastFolderPath + $"\\St_ch{i}.txt"))
+                {
+                    MessageBox.Show($"St файлa в канале {i} не хватает!");
+                }
+
+            }
+            plotView.hidePlot();
+            MessageBox.Show("Отчет создан успешно!");
+
         }
     }
 }
