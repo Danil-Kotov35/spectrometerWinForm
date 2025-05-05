@@ -9,6 +9,7 @@ using System.Threading;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using System.Globalization;
 using System.IO;
+using System.Drawing;
 
 
 namespace WindowsFormsApp1
@@ -19,12 +20,12 @@ namespace WindowsFormsApp1
         dynamic wrapper = new HP2000Wrapper();
 
         // загрузка данных в спектрометр. на вход идут время сканирования и количество усреднений 
-        public string loadData(int timeMicros, int average)
+        public string loadData(int timeMicros, int average = 1)
         {
-                       
+
             wrapper.setAverage(average);//устанавливаем количество усреднений
 
-            
+
             bool flag = wrapper.getSpectrum(timeMicros);// начинаем сбор спектральных данных
 
             if (flag == true)
@@ -38,17 +39,16 @@ namespace WindowsFormsApp1
         }
 
         // метод проверяет готовность спектральных данных
-        public void readyData(Label notificationsLabel, System.Windows.Forms.ProgressBar progressBar1)
+        public void readyData(Label notificationsLabel)
         {
-            progressBar1.Value = 0;
             int dataReadyFlag = 0;// флаг готовности
             // в цикле проверяем готовность данных
             while (dataReadyFlag != 1)
             {
                 dataReadyFlag = wrapper.getSpectrumDataReadyFlag();//метод который проверяет готовность 
-                progressBar1.PerformStep();// прогрессбар
+                notificationsLabel.Text = "Начат сбор спектра.";
+                
             }
-            
             if (dataReadyFlag == 1)
             {
                 notificationsLabel.Text = "данные спектрометра готовы!";
@@ -58,46 +58,49 @@ namespace WindowsFormsApp1
             {
                 notificationsLabel.Text = "Что-то пошло не так";
             }
-
         }
 
-        //метод который сохраняет полученные данные в промежуточный файл из которого будет происходить чтение и отрисовка на графике
-        public void saveData(int filter, bool darkSpectraCor, bool nonLinearCor, bool waverformCor,bool Xpixel=false,bool XwaveLength=true)
+        //метод который сохраняет полученные данные в массив из которого будет происходить чтение и отрисовка на графике
+        public float[,] saveData(int filter = 0, bool darkSpectraCor = false, bool nonLinearCor = false, bool waverformCor = false, bool XwaveLength = true)
         {
-            
+
             Spectrum data;
-            
+
             data = wrapper.ReadSpectrum();// массив с данными спектрометра(у)
-            float[] filterData = wrapper.dataProcess(data.array, filter, darkSpectraCor, nonLinearCor, waverformCor);// метод обрабатывает сырые значения со спеткрометра с уцчетом фильтров
-            float[,] rezultData = new float[510, 2];
-            string file = "spectrum_data.txt";// имя промежуточного файла куда записываются данные со спекторометра
+            float[] filterData = wrapper.dataProcess(data.array, filter, darkSpectraCor, nonLinearCor, waverformCor);// метод обрабатывает сырые значения со спеткрометра с учетом фильтров            
+            float[,] rezultData = new float[512, 2];
             if (data.valid_flag == SpectrumDataValidFlag.SPECTRUMDATA_VALID)
-            {               
-                if(XwaveLength == true)// условие проверяет ось какого вида мы используем в данный момент
+            {
+                if (XwaveLength == true)// условие проверяет ось какого вида мы используем в данный момент
                 {
                     float[] wavelengthArray = wrapper.getWavelength();// массив с длинами волн(х) 
-                    using (StreamWriter writer = new StreamWriter(file))
                     {
                         // Запись данных
-                        for (int i = 0; wavelengthArray[i] < 1678; i++) // !!!жесткая привязка к длине волны надо исправить!!!
+                        for (int i = 0; wavelengthArray[i] <= 1679; i++) // !!!жесткая привязка к длине волны надо исправить!!!
                         {
-                            writer.WriteLine($"{wavelengthArray[i].ToString("F3", CultureInfo.InvariantCulture)}\t{filterData[i].ToString("F2", CultureInfo.InvariantCulture)}");
-                        }
-                    }
-                }else if(Xpixel == true)
-                {
-                    using (StreamWriter writer = new StreamWriter(file))
-                    {
-                        // Запись данных
-                        for (int i = 0; i <= 510; i++) 
-                        {
-                            writer.WriteLine($"{i.ToString("F3", CultureInfo.InvariantCulture)}\t{filterData[i].ToString("F2", CultureInfo.InvariantCulture)}");
+                            rezultData[i, 0] = wavelengthArray[i];
+                            rezultData[i, 1] = filterData[i];
                         }
                     }
                 }
-            }   
-        }
+                else
+                {
+                    {
+                        // Запись данных
+                        for (int i = 0; i < rezultData.GetLength(0); i++)
+                        {
+                            rezultData[i, 0] = i;
+                            rezultData[i, 1] = filterData[i];
+
+                        }
+                    }
+                }
+            }
+            data.array = null;
+            return rezultData;
+        }   
     }
 }
+
 
 
